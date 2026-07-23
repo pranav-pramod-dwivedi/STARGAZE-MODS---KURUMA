@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kurama — Firebase Console</title>
+<link rel="stylesheet" href="glass.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="lg-bg"></div>
+<div class="lg-blob"></div>
+
+<!-- Read-only banner -->
+<div class="ro-banner" id="roBanner">
+  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+  READ ONLY MODE — browsing disabled
+</div>
+
+<header>
+  <h1><span class="accent" style="font-size:18px">
+    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+  </span> Kurama <span class="accent">Firebase</span> Console</h1>
+  <div class="header-right">
+    <span class="badge" id="dbStatus">Disconnected</span>
+    <span class="badge" id="nodeCount">—</span>
+    <label class="toggle" data-tip="Auto-refresh 10s" style="margin:0 4px">
+      <input type="checkbox" id="autoRefresh" onchange="toggleAutoRefresh()">
+      <span class="sl"></span>
+    </label>
+    <button class="btn btn-outline btn-xs tt" data-tip="Refresh" onclick="refreshAll()"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg></button>
+    <button class="btn btn-outline btn-xs tt" data-tip="Command Palette (Ctrl+Shift+P)" onclick="openCmdPalette()"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 3a3 3 0 00-3 3v12a3 3 0 003 3 3 3 0 003-3 3 3 0 00-3-3H6a3 3 0 00-3 3 3 3 0 003 3 3 3 0 003-3V6a3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3h12a3 3 0 003-3 3 3 0 00-3-3z"/></svg></button>
+    <button class="btn btn-outline btn-xs tt" data-tip="Shortcuts" onclick="showShortcuts()"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M6 8h.01M10 8h.01M14 8h.01M18 8h.01M8 12h.01M12 12h.01M16 12h.01M8 16h8"/></svg></button>
+    <button class="btn btn-xs tt" id="roToggle" onclick="toggleReadOnly()" style="background:rgba(40,25,25,.4);border:1px solid rgba(80,25,25,.1)" data-tip="Toggle read-only mode (Ctrl+Shift+R)">
+      <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+      Read Only
+    </button>
+  </div>
+</header>
+
+<div class="wrapper">
+  <!-- Sidebar -->
+  <div class="sidebar glass" id="sidebar">
+    <div class="sidebar-content">
+      <div class="sidebar-section">
+        <div class="title">Navigation</div>
+        <div class="sidebar-item active tt" data-view="tree" onclick="switchView('tree')" data-tip="Browse database tree">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M8 8l4-4 4 4M8 16l4 4 4-4"/></svg>
+          <span class="txt">Database Tree</span>
+        </div>
+        <div class="sidebar-item tt" data-view="json" onclick="switchView('json')" data-tip="Edit raw JSON data">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H7a2 2 0 00-2 2v5a2 2 0 01-2 2 2 2 0 012 2v5c0 1.1.9 2 2 2h1"/><path d="M16 3h1a2 2 0 012 2v5a2 2 0 002 2 2 2 0 00-2 2v5a2 2 0 01-2 2h-1"/></svg>
+          <span class="txt">JSON View</span>
+        </div>
+        <div class="sidebar-item tt" data-view="keys" onclick="switchView('keys')" data-tip="Manage license keys">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 11-7.778 7.778 5.5 5.5 0 017.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
+          <span class="txt">License Keys</span>
+        </div>
+        <div class="sidebar-item tt" data-view="project" onclick="switchView('project')" data-tip="Project configuration">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+          <span class="txt">Project</span>
+        </div>
+        <div class="sidebar-item tt" data-view="import" onclick="switchView('import')" data-tip="Import data and keys">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          <span class="txt">Import</span>
+        </div>
+        <div class="sidebar-item tt" data-view="snapshots" onclick="switchView('snapshots')" data-tip="Database snapshots">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
+          <span class="txt">Snapshots</span>
+        </div>
+      </div>
+      <div class="sidebar-divider"></div>
+      <div class="sidebar-section">
+        <div class="title">Quick Paths</div>
+        <div class="sidebar-item tt" onclick="navigateTo('license_keys')" style="font-size:11px;padding:5px 12px" data-tip="Go to /license_keys">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>
+          <span class="txt">/license_keys</span>
+        </div>
+        <div class="sidebar-item tt" onclick="navigateTo('project_status')" style="font-size:11px;padding:5px 12px" data-tip="Go to /project_status">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>
+          <span class="txt">/project_status</span>
+        </div>
+        <div class="sidebar-item tt" onclick="navigateTo('')" style="font-size:11px;padding:5px 12px" data-tip="Go to root /">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>
+          <span class="txt">/ (root)</span>
+        </div>
+      </div>
+      <div class="sidebar-divider"></div>
+      <div class="sidebar-section">
+        <div class="title">Bookmarks</div>
+        <div id="bookmarkList"><div style="font-size:11px;opacity:.4;padding:8px">No bookmarks</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="sidebar-resize" id="sidebarResize"></div>
+
+  <!-- Main -->
+  <div class="main glass" id="mainArea">
+
+    <!-- ====== TREE VIEW ====== -->
+    <div class="view" id="view-tree">
+      <div class="view-header">
+        <div>
+          <h2><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M8 8l4-4 4 4M8 16l4 4 4-4"/></svg> Database Tree</h2>
+          <div class="path-bar" id="pathBar"><span class="root" onclick="navigateTo('')">/</span></div>
+        </div>
+        <div class="view-actions">
+          <button class="btn btn-outline btn-xs ro-hide" onclick="collapseAll()"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="12" x2="15" y2="12"/></svg> Collapse</button>
+          <button class="btn btn-outline btn-xs ro-hide" onclick="expandAll()"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg> Expand</button>
+          <button class="btn btn-outline btn-xs ro-hide" onclick="showAddNodeModal('')"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Add</button>
+          <button class="btn btn-outline btn-xs ro-hide" onclick="exportDb()"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Export</button>
+        </div>
+      </div>
+      <div class="tbar">
+        <div class="search-wrap">
+          <span class="si"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
+          <input id="treeSearch" placeholder="Search nodes (key:value)" oninput="filterTree()">
+        </div>
+        <button class="btn btn-outline btn-xs" onclick="copyPath()" id="copyPathBtn" style="display:none"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> Copy Path</button>
+      </div>
+      <div id="treeContainer"><div class="loading"><div class="sp"></div>Loading database...</div></div>
+    </div>
+
+    <!-- ====== JSON VIEW ====== -->
+    <div class="view" id="view-json" style="display:none">
+      <div class="view-header">
+        <h2><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H7a2 2 0 00-2 2v5a2 2 0 01-2 2 2 2 0 012 2v5c0 1.1.9 2 2 2h1"/><path d="M16 3h1a2 2 0 012 2v5a2 2 0 002 2 2 2 0 00-2 2v5a2 2 0 01-2 2h-1"/></svg> Raw JSON</h2>
+        <div class="view-actions">
+          <button class="btn btn-outline btn-xs" onclick="switchView('tree')"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M8 8l4-4 4 4M8 16l4 4 4-4"/></svg> Tree View</button>
+          <button class="btn btn-primary btn-xs ro-hide" onclick="saveRawJson()"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Save</button>
+        </div>
+      </div>
+      <div style="height:calc(100vh - 120px);display:flex;flex-direction:column">
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap">
+          <span style="font-size:11px;opacity:.5">Editing entire database.</span>
+          <button class="btn btn-outline btn-xs" onclick="formatRawJson()"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg> Format</button>
+          <button class="btn btn-outline btn-xs" onclick="minifyRawJson()"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/></svg> Minify</button>
+          <button class="btn btn-outline btn-xs" onclick="loadRawJson()"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg> Reload</button>
+          <span id="rawJsonStatus" style="font-size:11px;opacity:.5"></span>
+        </div>
+        <textarea class="inp" id="rawJsonEditor" style="flex:1;min-height:200px;font-family:monospace;font-size:11px;resize:none;padding:12px;tab-size:2"></textarea>
+      </div>
+    </div>
+
+    <!-- ====== KEYS VIEW ====== -->
+    <div class="view" id="view-keys" style="display:none">
+      <div class="view-header">
+        <h2><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 11-7.778 7.778 5.5 5.5 0 017.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg> License Keys</h2>
+        <div class="view-actions">
+          <button class="btn btn-success btn-xs ro-hide tt" onclick="generateKeys()" data-tip="Bulk generate keys"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="2"/><circle cx="8" cy="8" r="1.5"/><circle cx="16" cy="8" r="1.5"/><circle cx="8" cy="16" r="1.5"/><circle cx="16" cy="16" r="1.5"/></svg> Generate</button>
+          <button class="btn btn-outline btn-xs ro-hide tt" onclick="addSingleKey()" data-tip="Add one key manually"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Add</button>
+          <button class="btn btn-danger btn-xs ro-hide" onclick="bulkAction('delete')" id="bulkDeleteBtn" style="display:none"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg> Delete</button>
+          <button class="btn btn-warning btn-xs ro-hide" onclick="bulkAction('block')" id="bulkBlockBtn" style="display:none"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg> Block</button>
+          <button class="btn btn-success btn-xs ro-hide" onclick="bulkAction('unblock')" id="bulkUnblockBtn" style="display:none"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Unblock</button>
+          <button class="btn btn-warning btn-xs ro-hide" onclick="bulkAction('expire')" id="bulkExpireBtn" style="display:none"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Expire Now</button>
+          <span class="sel-count" id="selCount"></span>
+        </div>
+      </div>
+      <div class="stats-row" id="keysStats"></div>
+      <div class="tbar">
+        <div class="search-wrap">
+          <span class="si"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
+          <input id="keysSearch" placeholder="Search keys..." oninput="renderKeysDelayed()">
+        </div>
+        <select class="inp" id="keysFilterStatus" onchange="renderKeysDelayed()" style="width:auto;min-width:100px">
+          <option value="all">All Keys</option>
+          <option value="valid">Valid</option>
+          <option value="expired">Expired</option>
+          <option value="blocked">Blocked</option>
+          <option value="noexpiry">No Expiry</option>
+        </select>
+        <select class="inp" id="keysSort" onchange="renderKeysDelayed()" style="width:auto;min-width:100px">
+          <option value="key">Sort by Key</option>
+          <option value="expires">Sort by Expiry</option>
+          <option value="status">Sort by Status</option>
+        </select>
+        <button class="btn btn-outline btn-xs tt" data-tip="Export JSON" onclick="exportKeys()"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></button>
+        <button class="btn btn-outline btn-xs tt" data-tip="Export CSV" onclick="exportKeysCSV()"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg></button>
+        <button class="btn btn-outline btn-xs ro-hide tt" data-tip="Extend expiry +30d" onclick="extendKeyExpiry(30)"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 18 20 15 17 18"/><path d="M4 16a4 4 0 004-4V9a4 4 0 018 0v3a4 4 0 004 4"/><circle cx="12" cy="20" r="2"/></svg> +30d</button>
+      </div>
+      <div id="keysContainer"><div class="loading"><div class="sp"></div>Loading...</div></div>
+      <div id="keysPagination" style="display:flex;justify-content:center;gap:6px;margin-top:10px"></div>
+    </div>
+
+    <!-- ====== PROJECT VIEW ====== -->
+    <div class="view" id="view-project" style="display:none">
+      <div class="view-header"><h2><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg> Project Settings</h2></div>
+      <div id="projectContainer"></div>
+    </div>
+
+    <!-- ====== IMPORT VIEW ====== -->
+    <div class="view" id="view-import" style="display:none">
+      <div class="view-header"><h2><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Import / Add Data</h2></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+        <div class="card glass">
+          <h3><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Add Single Node</h3>
+          <div class="fg"><label>Path</label><input class="inp" id="importPath" placeholder="license_keys/MY-KEY"></div>
+          <div class="fg"><label>Value (JSON)</label><textarea class="inp" id="importValue" style="min-height:80px" placeholder='{"expiresAt": 1893456000000}'></textarea></div>
+          <button class="btn btn-primary ro-hide" onclick="importNode()"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Import</button>
+          <span class="importStatus" style="margin-left:8px;font-size:12px;opacity:.5"></span>
+        </div>
+        <div class="card glass">
+          <h3><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16.5 9.4l-9-5.19M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 002 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg> Bulk Import JSON</h3>
+          <div class="fg"><label>Root path (optional)</label><input class="inp" id="bulkImportPath" placeholder="Leave empty for root"></div>
+          <div class="fg"><label>JSON payload</label><textarea class="inp" id="bulkImportJson" style="min-height:120px"></textarea></div>
+          <button class="btn btn-warning ro-hide" onclick="bulkImport()"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16.5 9.4l-9-5.19M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 002 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg> Import</button>
+          <span class="importStatus" style="font-size:12px;opacity:.5"></span>
+        </div>
+        <div class="card glass" style="grid-column:1/-1">
+          <h3><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 11-7.778 7.778 5.5 5.5 0 017.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg> Batch Add License Keys</h3>
+          <div class="fg"><label>One per line — key or key:timestampMs or key:daysFromNow</label><textarea class="inp" id="batchKeysArea" style="min-height:80px" placeholder="KEY-001:1893456000000&#10;KEY-002:30d&#10;KEY-003"></textarea></div>
+          <div class="fr">
+            <button class="btn btn-success ro-hide" onclick="batchAddKeys()"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Batch Add</button>
+            <span class="importStatus" style="font-size:12px;opacity:.5"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ====== SNAPSHOTS VIEW ====== -->
+    <div class="view" id="view-snapshots" style="display:none">
+      <div class="view-header">
+        <h2><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg> Snapshots</h2>
+        <div class="view-actions">
+          <button class="btn btn-primary btn-xs ro-hide" onclick="takeSnapshot()"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg> Take Snapshot</button>
+        </div>
+      </div>
+      <p style="font-size:12px;opacity:.5;margin-bottom:14px">Save and compare database states. Restore or diff any snapshot.</p>
+      <div id="snapshotsContainer"><div class="loading"><div class="sp"></div>No snapshots yet</div></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Detail Panel -->
+<div class="detail-panel glass" id="detailPanel">
+  <div class="dh">
+    <h3 id="detailTitle">Node</h3>
+    <button class="btn btn-ghost btn-xs" onclick="closeDetail()"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+  </div>
+  <div class="dpath" id="detailPath">/</div>
+  <div class="fg"><label>Key</label><input class="inp" id="detailKey" readonly style="opacity:.6"></div>
+  <div class="fg"><label>Type</label><input class="inp" id="detailType" readonly style="opacity:.6;font-family:monospace"></div>
+  <div class="fg"><label>Size</label><input class="inp" id="detailSize" readonly style="opacity:.6"></div>
+  <div class="fg"><label>Value (JSON)</label><textarea class="inp" id="detailValue" style="min-height:120px;font-family:monospace"></textarea></div>
+  <div class="fr">
+    <button class="btn btn-primary btn-sm ro-hide" onclick="saveDetail()"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Save</button>
+    <button class="btn btn-outline btn-sm ro-hide" onclick="duplicateDetail()"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> Duplicate</button>
+    <button class="btn btn-outline btn-sm" onclick="downloadDetail()"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Download</button>
+    <button class="btn btn-danger btn-sm ro-hide" onclick="deleteDetail()"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg> Delete</button>
+    <span id="detailStatus" style="font-size:12px;opacity:.5;align-self:center"></span>
+  </div>
+  <div style="margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,20,20,.06)">
+    <label style="font-size:9px;text-transform:uppercase;letter-spacing:1.5px;opacity:.4">Move / Rename</label>
+    <div class="fr" style="margin-top:4px">
+      <input class="inp" id="detailMovePath" placeholder="new/path" style="flex:1;font-family:monospace;font-size:11px">
+      <button class="btn btn-warning btn-sm ro-hide" onclick="moveDetail()"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 9 2 12 5 15"/><polyline points="9 5 12 2 15 5"/><polyline points="15 19 12 22 9 19"/><polyline points="19 9 22 12 19 15"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="12" y1="2" x2="12" y2="22"/></svg> Move</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Node Modal -->
+<div class="modal-overlay" id="addNodeModal">
+  <div class="modal glass glass-thick">
+    <h3><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Add Child Node</h3>
+    <div class="fg"><label>Parent Path</label><input class="inp" id="addNodePath" readonly style="opacity:.6;font-family:monospace"></div>
+    <div class="fg"><label>Key</label><input class="inp" id="addNodeKey" placeholder="node-name"></div>
+    <div class="fg"><label>Type</label>
+      <select class="inp" id="addNodeType" onchange="toggleAddNodeValue()" style="width:auto">
+        <option value="object">Object {}</option>
+        <option value="array">Array []</option>
+        <option value="string">String</option>
+        <option value="number">Number</option>
+        <option value="boolean">Boolean</option>
+        <option value="null">Null</option>
+      </select>
+    </div>
+    <div class="fg" id="addNodeValueGroup"><label>Value</label>
+      <textarea class="inp" id="addNodeValue" style="min-height:80px;font-family:monospace" placeholder='{"key": "value"}'></textarea>
+    </div>
+    <div class="fr">
+      <button class="btn btn-primary" onclick="confirmAddNode()"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Create</button>
+      <button class="btn btn-outline" onclick="closeModal('addNodeModal')">Cancel</button>
+      <span id="addNodeStatus" style="font-size:12px;opacity:.5"></span>
+    </div>
+  </div>
+</div>
+
+<!-- Generate Keys Modal -->
+<div class="modal-overlay" id="genKeysModal">
+  <div class="modal glass glass-thick">
+    <h3><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="2"/><circle cx="8" cy="8" r="1.5"/><circle cx="16" cy="8" r="1.5"/><circle cx="8" cy="16" r="1.5"/><circle cx="16" cy="16" r="1.5"/></svg> Generate License Keys</h3>
+    <div class="fg"><label>Prefix</label><input class="inp" id="genPrefix" value="KRM-" placeholder="KRM-"></div>
+    <div class="fg"><label>Count</label><input class="inp" id="genCount" value="5" type="number" min="1" max="100" style="width:80px"></div>
+    <div class="fg"><label>Key Format</label>
+      <select class="inp" id="genFormat" style="width:auto">
+        <option value="hex">Hex (KRM-A1B2C3D4)</option>
+        <option value="alphanum">Alphanumeric (KRM-X9K2M7Q1)</option>
+        <option value="uuid">UUID Short (KRM-a1b2c3d4)</option>
+      </select>
+    </div>
+    <div class="fg"><label>Expiry Preset</label>
+      <select class="inp" id="genExpiry" style="width:auto">
+        <option value="0">No expiry</option>
+        <option value="86400000">1 day</option>
+        <option value="604800000">7 days</option>
+        <option value="2592000000">30 days</option>
+        <option value="31536000000">1 year</option>
+        <option value="custom">Custom</option>
+      </select>
+    </div>
+    <div class="fg" id="genCustomExpiryGroup" style="display:none"><label>Custom Expiry</label><input class="inp" id="genCustomExpiry" type="datetime-local" style="width:auto"></div>
+    <div class="fg"><label class="toggle" style="display:inline-block;vertical-align:middle">
+      <input type="checkbox" id="genBlocked"><span class="sl"></span>
+    </label> <span style="font-size:12px;opacity:.5">Mark as blocked on creation</span></div>
+    <div class="fr">
+      <button class="btn btn-success" onclick="previewGenerateKeys()"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg> Preview</button>
+      <button class="btn btn-primary" onclick="confirmGenerateKeys()"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="2"/><circle cx="8" cy="8" r="1.5"/><circle cx="16" cy="8" r="1.5"/><circle cx="8" cy="16" r="1.5"/><circle cx="16" cy="16" r="1.5"/></svg> Generate</button>
+      <button class="btn btn-outline" onclick="closeModal('genKeysModal')">Cancel</button>
+      <span id="genKeysStatus" style="font-size:12px;opacity:.5"></span>
+    </div>
+    <div id="genKeysPreview" style="margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,20,20,.06);max-height:200px;overflow-y:auto">
+      <pre style="font-size:11px;opacity:.6">Preview will appear here</pre>
+    </div>
+  </div>
+</div>
+
+<!-- Move Modal -->
+<div class="modal-overlay" id="moveNodeModal">
+  <div class="modal glass glass-thick">
+    <h3><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 9 2 12 5 15"/><polyline points="9 5 12 2 15 5"/><polyline points="15 19 12 22 9 19"/><polyline points="19 9 22 12 19 15"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="12" y1="2" x2="12" y2="22"/></svg> Move / Rename Node</h3>
+    <div class="fg"><label>Current Path</label><input class="inp" id="moveCurrentPath" readonly style="opacity:.6;font-family:monospace"></div>
+    <div class="fg"><label>New Path</label><input class="inp" id="moveNewPath" placeholder="new/path/here" style="font-family:monospace"></div>
+    <div class="fr">
+      <button class="btn btn-warning" onclick="confirmMoveNode()"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 9 2 12 5 15"/><polyline points="9 5 12 2 15 5"/><polyline points="15 19 12 22 9 19"/><polyline points="19 9 22 12 19 15"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="12" y1="2" x2="12" y2="22"/></svg> Move</button>
+      <button class="btn btn-outline" onclick="closeModal('moveNodeModal')">Cancel</button>
+      <span id="moveNodeStatus" style="font-size:12px;opacity:.5"></span>
+    </div>
+  </div>
+</div>
+
+<!-- Diff Modal -->
+<div class="modal-overlay" id="diffModal">
+  <div class="modal glass glass-thick" style="width:680px">
+    <h3 id="diffTitle"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg> Diff</h3>
+    <div id="diffContent" style="font-family:monospace;font-size:11px;max-height:500px;overflow:auto"></div>
+    <button class="btn btn-outline btn-sm" style="margin-top:14px" onclick="closeModal('diffModal')">Close</button>
+  </div>
+</div>
+
+<!-- Shortcuts Modal -->
+<div class="modal-overlay" id="shortcutsModal">
+  <div class="modal glass glass-thick" style="width:480px">
+    <h3><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M6 8h.01M10 8h.01M14 8h.01M18 8h.01M8 12h.01M12 12h.01M16 12h.01M8 16h8"/></svg> Keyboard Shortcuts</h3>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:12px">
+      <div><kbd class="kbd">/</kbd> or <kbd class="kbd">Ctrl+F</kbd> <span style="opacity:.5">Search</span></div>
+      <div><kbd class="kbd">Escape</kbd> <span style="opacity:.5">Close panel</span></div>
+      <div><kbd class="kbd">R</kbd> <span style="opacity:.5">Refresh</span></div>
+      <div><kbd class="kbd">1</kbd>–<kbd class="kbd">6</kbd> <span style="opacity:.5">Switch views</span></div>
+      <div><kbd class="kbd">A</kbd> <span style="opacity:.5">Add node (tree)</span></div>
+      <div><kbd class="kbd">E</kbd> <span style="opacity:.5">Edit selected</span></div>
+      <div><kbd class="kbd">Delete</kbd> <span style="opacity:.5">Delete selected</span></div>
+      <div><kbd class="kbd">Ctrl+Shift+P</kbd> <span style="opacity:.5">Command palette</span></div>
+      <div><kbd class="kbd">Ctrl+Shift+R</kbd> <span style="opacity:.5">Toggle read-only</span></div>
+      <div><kbd class="kbd">Ctrl+Shift+E</kbd> <span style="opacity:.5">Export DB</span></div>
+    </div>
+    <button class="btn btn-outline btn-sm" style="margin-top:14px" onclick="closeModal('shortcutsModal')">Close</button>
+  </div>
+</div>
+
+<!-- Context Menu -->
+<div class="ctx-menu glass glass-thick" id="ctxMenu">
+  <div class="ctx-item" onclick="ctxEdit()"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> Edit</div>
+  <div class="ctx-item ro-hide" onclick="ctxDuplicate()"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> Duplicate</div>
+  <div class="ctx-item ro-hide" onclick="ctxAddChild()"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Add Child</div>
+  <div class="ctx-item" onclick="ctxCopyPath()"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> Copy Path</div>
+  <div class="ctx-item" onclick="ctxCopyValue()"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/></svg> Copy Value</div>
+  <div class="ctx-item" onclick="ctxBookmark()"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg> Bookmark</div>
+  <div class="ctx-item ro-hide" onclick="ctxMove()"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 9 2 12 5 15"/><polyline points="9 5 12 2 15 5"/><polyline points="15 19 12 22 9 19"/><polyline points="19 9 22 12 19 15"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="12" y1="2" x2="12" y2="22"/></svg> Move / Rename</div>
+  <div class="ctx-divider"></div>
+  <div class="ctx-item" onclick="ctxDownload()"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Download</div>
+  <div class="ctx-divider"></div>
+  <div class="ctx-item danger ro-hide" onclick="ctxDelete()"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg> Delete</div>
+</div>
+
+<!-- Fork Modal -->
+<div class="modal-overlay" id="forkModal">
+  <div class="modal glass glass-thick">
+    <h3><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> Fork Node</h3>
+    <div class="fg"><label>Source Path</label><input class="inp" id="forkCurrentPath" readonly style="opacity:.6;font-family:monospace"></div>
+    <div class="fg"><label>New Path</label><input class="inp" id="forkNewPath" placeholder="new/path/here" style="font-family:monospace"></div>
+    <div class="fg"><label>Value (JSON) — edit before saving</label><textarea class="inp" id="forkValue" style="min-height:100px;font-family:monospace"></textarea></div>
+    <div class="fr">
+      <button class="btn btn-primary" onclick="confirmFork()"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Fork</button>
+      <button class="btn btn-outline" onclick="closeModal('forkModal')">Cancel</button>
+      <span id="forkStatus" style="font-size:12px;opacity:.5"></span>
+    </div>
+  </div>
+</div>
+
+<!-- Confirmation Modal -->
+<div class="modal-overlay" id="confirmOverlay">
+  <div class="modal glass glass-thick">
+    <h3><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> Confirm</h3>
+    <p id="confirmMsg" style="font-size:13px;margin:8px 0 16px;line-height:1.4"></p>
+    <div class="fr">
+      <button class="btn btn-danger" id="confirmBtn"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Confirm</button>
+      <button class="btn btn-outline" id="cancelBtn">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- Command Palette -->
+<div class="cmd-palette-overlay" id="cmdPaletteOverlay"></div>
+<div class="cmd-palette glass glass-thick" id="cmdPalette">
+  <input id="cmdSearch" placeholder="Type a command..." oninput="showCmdResults(this.value)" onkeydown="if(event.key==='Enter'){const sel=document.querySelector('.cmd-item.selected');if(sel)sel.click()}if(event.key==='ArrowDown'){const items=document.querySelectorAll('.cmd-item');const idx=Array.from(items).findIndex(el=>el.classList.contains('selected'));items[idx]?.classList.remove('selected');items[Math.min(idx+1,items.length-1)]?.classList.add('selected')}if(event.key==='ArrowUp'){const items=document.querySelectorAll('.cmd-item');const idx=Array.from(items).findIndex(el=>el.classList.contains('selected'));items[idx]?.classList.remove('selected');items[Math.max(idx-1,0)]?.classList.add('selected')}">
+  <div class="results" id="cmdResults"></div>
+</div>
+
+<!-- Toast -->
+<div class="toast-c" id="toastContainer"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
