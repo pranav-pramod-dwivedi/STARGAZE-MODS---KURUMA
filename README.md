@@ -25,35 +25,35 @@ By hooking into the native graphics rendering pipeline (OpenGL ES / Vulkan API) 
 
 ---
 
-## ── [ DEEP-DIVE TECHNICAL SPECIFICATIONS ] ──
+## ── [ FEATURES ] ──
 
-###  INFALLIBLE AIM ENGINE (VECTOR INTERCEPTION)
+###  AIMBOT
 * **Direct Memory Pointer Hooking:** Intercepts active player transform structures (`Transform_GetPosition`) to compute exact XYZ relative coordinate matrices instantly.
 * **Dynamic FOV Matrix Scaler:** Implements an interactive field-of-view bounding circle. The calculation loop discards any entity vectors falling outside the user-defined radial pixel tolerance.
 * **Organic Smooth Math Drag:** Utilizes advanced linear interpolation (LERP) algorithms and bezier curve smoothing to mimic human finger friction, successfully evading automated server-side heuristic detection models.
 * **Target Priority Sorting:** Real-time distance, health, or crosshair-proximity sorting algorithms ensure the injection engine locks onto the optimal tactical target.
 
-###  OMNIPRESENT VISUAL TELEMETRY (ADVANCED ESP)
+###  ADVANCED ESP
 * **Chams Overlay (Depth Buffer Manipulation):** Forces custom structural material rendering models by patching OpenGL depth test functions (`glDepthFunc`), making entities visible behind solid geometry.
 * **Skeletal Wireframe Mapping:** Queries the client-side bone array matrices (`GetBoneTransform`) to map multi-joint skeletons, real-time animation postures, and directional vectors.
 * **Dynamic Bounding Boxes & Distance Arrays:** Draws real-time 2D/3D bounding boxes around entities, integrated with a live mathematical rangefinder calculating distance variables down to the millisecond.
 * **Resource & Drop Radar:** Filters and projects ground item drop IDs, supply drop crates, and vehicle coordinates onto an independent radar UI configuration.
 
-### ANOMALY BYPASS & HEURISTIC SHIELDING
+### SECURITY BYPASS [ANTIBAN]
 * **Memory Address Masking:** Dynamically freezes, unfreezes, and hides modified memory values within random virtual address spaces to mitigate real-time active scanning sweeps.
 * **Log Invalidation & Voiding:** Hooks directly into native logging systems (`__android_log_print`) to intercept, drop, and wipe security error flags before they are compiled or transmitted.
 * **System Properties Spoofer:** Emulates clean, non-rooted device identification signatures to obfuscate the presence of superuser environments from integrity checks.
 
 ---
 
-## ── [ VISUAL DEPLOYMENT SPREAD ] ──
+## ── [ GALLERY ] ──
 
 ### 📱 SCREENSHOTS (ANDROID)
 
 <div align="center">
-  <img src="path/to/portrait_screenshot1.png" width="30%" alt="Menu UI Hook Overview" />
-  <img src="path/to/portrait_screenshot2.png" width="30%" alt="ESP Configuration Arrays" />
-  <img src="path/to/portrait_screenshot3.png" width="30%" alt="Memory Injection Terminal Console" />
+  <img src="IMG/photo_2026-07-24 09.44.23.jpeg" width="30%" alt="Menu UI Hook Overview" />
+  <img src="IMG/photo_2026-07-24 09.44.26.jpeg" width="30%" alt="ESP Configuration Arrays" />
+  <img src="IMG/photo_2026-07-24 09.44.29.jpeg" width="30%" alt="Memory Injection Terminal Console" />
 </div>
 
 ### 🖥️ SCREENSHOTS (WINDOWS [BLUESTACKS])
