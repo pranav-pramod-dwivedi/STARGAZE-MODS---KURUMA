@@ -59,9 +59,9 @@ By hooking into the native graphics rendering pipeline (OpenGL ES / Vulkan API) 
 ### 🖥️ SCREENSHOTS (WINDOWS [BLUESTACKS])
 
 <div align="center">
-  <img src="path/to/landscape_screenshot1.png" width="95%" alt="In-Game HUD Overlay Grid View" /><br/><br/>
-  <img src="path/to/landscape_screenshot2.png" width="95%" alt="Active Entity Telemetry Display HUD" /><br/><br/>
-  <img src="path/to/landscape_screenshot3.png" width="95%" alt="Bypass System Diagnostics Matrix Interface" />
+  <img src="IMG/photo_2026-07-24 09.47.57.jpeg" width="95%" alt="In-Game HUD Overlay Grid View" /><br/><br/>
+  <img src="IMG/photo_2026-07-24 09.48.00.jpeg" width="95%" alt="Active Entity Telemetry Display HUD" /><br/><br/>
+  <img src="IMG/photo_2026-07-24 09.47.59.jpeg" width="95%" alt="Bypass System Diagnostics Matrix Interface" />
 </div>
 
 ---
