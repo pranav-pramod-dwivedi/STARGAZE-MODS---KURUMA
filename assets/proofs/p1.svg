@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="360" viewBox="0 0 640 360">
+<rect width="640" height="360" fill="#14120e"/>
+<rect x="8" y="8" width="624" height="344" fill="none" stroke="#2c2619" stroke-width="2"/>
+<circle cx="90" cy="90" r="46" fill="none" stroke="#ffb000" stroke-width="3"/>
+<path d="M90 30v34M90 116v34M30 90h34M116 90h34" stroke="#ffb000" stroke-width="3"/>
+<circle cx="90" cy="90" r="9" fill="#ff6b1a"/>
+<rect x="330" y="70" width="180" height="120" fill="none" stroke="#5a5236" stroke-width="3"/>
+<rect x="440" y="200" width="140" height="90" fill="none" stroke="#5a5236" stroke-width="3"/>
+<text x="24" y="300" font-family="monospace" font-size="26" fill="#ede4d3">PROOF SAMPLE 01</text>
+<text x="24" y="332" font-family="monospace" font-size="18" fill="#9c8f78">CHAMS ACTIVE · BUILD 3.7.1</text>
+</svg>
