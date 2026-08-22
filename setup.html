@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Setup Guide // STARGAZE MODS</title>
+<meta name="description" content="Download and install the Kuruma executive panel: sideload steps, permissions, key activation, overlay launch, config, and real troubleshooting.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<a class="skip" href="#steps">Skip to steps</a>
+
+<aside class="rail">
+  <div>
+    <div class="brand">
+      <svg width="34" height="34" viewBox="0 0 34 34" fill="none" aria-hidden="true"><circle cx="17" cy="17" r="12" stroke="#ffb000" stroke-width="1.5"/><path d="M17 1v9M17 24v9M1 17h9M24 17h9" stroke="#ffb000" stroke-width="1.5"/><circle cx="17" cy="17" r="2.5" fill="#ff6b1a"/></svg>
+      <div class="brand-word">STARGAZE<br><span>MODS</span></div>
+    </div>
+    <div class="rail-tag">KURUMA EXECUTIVE PANEL</div>
+  </div>
+  <nav aria-label="Sections">
+    <a href="index.html">SYSTEM</a>
+    <a href="modules.html">MODULES</a>
+    <a href="verify.html">KEY SYSTEM</a>
+    <a href="setup.html">SETUP GUIDE</a>
+    <a href="proofs.html">PROOFS</a>
+  </nav>
+  <div class="rail-status">
+    <div>BUILD <b>3.7.1-STABLE</b></div>
+    <div>ARCH <b>ARM64-V8A</b></div>
+    <div>PRIV <b>ROOT / UID 0</b></div>
+  </div>
+</aside>
+
+<main>
+  <section class="page-head reveal">
+    <div class="kicker-row"><span class="idx">PAGE 04 // SETUP GUIDE</span><h1>Download to first overlay</h1></div>
+    <p class="lede">Seven ordered steps from release page to in-game panel. Error messages quoted below are verbatim from the shipped build.</p>
+  </section>
+
+  <section id="dl">
+    <div class="sec-head reveal"><div class="kicker-row"><span class="idx">GET</span><h2>The build</h2></div></div>
+    <div class="block reveal">
+      <table class="tri">
+        <thead><tr><th>FIELD</th><th>VALUE</th></tr></thead>
+        <tbody>
+          <tr><td>VERSION</td><td>3.7.1-STABLE</td></tr>
+          <tr><td>ABI</td><td>arm64-v8a (64-bit ARM)</td></tr>
+          <tr><td>SOURCE</td><td>GitHub Releases on this repo only, never re-uploads</td></tr>
+          <tr><td>VERIFY</td><td>Compare the SHA-256 on the release page before installing</td></tr>
+          <tr><td>ROOT</td><td>Magisk or KernelSU with UID 0 granted to the panel and injector shell</td></tr>
+        </tbody>
+      </table>
+      <p style="margin-top:22px"><a class="btn btn-solid" href="https://github.com/pranav-pramod-dwivedi/STARGAZE-MODS---KURUMA/releases/latest">OPEN RELEASES PAGE
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M7 1v8m0 0L3.5 5.5M7 9l3.5-3.5M1.5 12.5h11" stroke="currentColor" stroke-width="1.6"/></svg></a></p>
+    </div>
+  </section>
+
+  <section id="steps">
+    <div class="sec-head reveal"><div class="kicker-row"><span class="idx">RUN</span><h2>Seven steps</h2></div></div>
+    <div class="block reveal">
+      <div class="steps">
+        <div class="step"><div class="step-body"><h3>Get the APK</h3><p>Download from the releases link above on your device. Browsers may warn about non-Play files; the panel ships as a direct APK by design.</p></div></div>
+        <div class="step"><div class="step-body"><h3>Allow the install</h3><p>Settings → Apps → Special access → Install unknown apps: allow your browser or file manager. The dex is Virbox-packed, so Play Protect may flag the unknown signature — scan once, then accept with Install anyway.</p></div></div>
+        <div class="step"><div class="step-body"><h3>Grant root or start Shizuku</h3><p>Open the panel; grant the superuser prompt from Magisk/KernelSU when asked (the injector needs UID 0). No root but rooted-adjacent setup? Start Shizuku wireless debugging — the build carries the Shizuku provider.</p></div></div>
+        <div class="step"><div class="step-body"><h3>Allow the overlay</h3><p>When the panel asks, enable Display over other apps. The floating panel renders on layer 2003 via SYSTEM_ALERT_WINDOW; without it the in-game HUD cannot appear.</p></div></div>
+        <div class="step"><div class="step-body"><h3>Activate your key</h3><p>Type your license key and hit activate. The app runs the exact request documented on the Key System page: INVALID means unknown, BLOCKED means revoked, EXPIRED means past expiresAt, ERROR means network or locked rules — retry on stable internet.</p></div></div>
+        <div class="step"><div class="step-body"><h3>Launch the overlay</h3><p>Start a match, then open the floating panel from the notification or launcher service. First attach prints the boot log: PID hook, libil2cpp.so base resolve, offset patch, ESP override.</p></div></div>
+        <div class="step"><div class="step-body"><h3>Tune config.json</h3><p>Adjust FOV, smoothing and module toggles in the panel config (defaults below). Values apply on relaunch of the overlay.</p>
+          <div class="box step-body">
+            <div class="box-head"><span>KURUMA-MODS/config.json</span><button class="copy-btn" type="button" data-copy="cfgCode">COPY</button></div>
+            <pre class="code" id="cfgCode">{
+  <span class="c-k">"aimbot"</span>: { <span class="c-k">"enabled"</span>: <span class="c-b">true</span>, <span class="c-k">"fov"</span>: <span class="c-n">120</span>, <span class="c-k">"smoothing"</span>: <span class="c-n">4.5</span>, <span class="c-k">"target_bone"</span>: <span class="c-b">"head"</span> },
+  <span class="c-k">"esp"</span>: { <span class="c-k">"enabled"</span>: <span class="c-b">true</span>, <span class="c-k">"chams"</span>: <span class="c-b">true</span>, <span class="c-k">"skeleton"</span>: <span class="c-b">true</span>, <span class="c-k">"distance"</span>: <span class="c-b">true</span>, <span class="c-k">"boxes_3d"</span>: <span class="c-b">true</span> },
+  <span class="c-k">"bypass"</span>: { <span class="c-k">"mask_memory"</span>: <span class="c-b">true</span>, <span class="c-k">"nullify_logs"</span>: <span class="c-b">true</span>, <span class="c-k">"spoof_signature"</span>: <span class="c-b">true</span> }
+}</pre>
+          </div>
+        </div></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="trouble">
+    <div class="sec-head reveal">
+      <div class="kicker-row"><span class="idx">FIX</span><h2>Troubleshooting</h2></div>
+      <p>Real states from the shipped code paths, with the fix that matches each one.</p>
+    </div>
+    <div class="block reveal">
+      <table class="tri">
+        <thead><tr><th>WHAT YOU SEE</th><th>CAUSE AND FIX</th></tr></thead>
+        <tbody>
+          <tr><td>IPC SERVICE NOT CONNECTED</td><td>The binder service has not come up yet; the app retries for 5 seconds automatically. Reopen the panel if it persists.</td></tr>
+          <tr><td>INVALID</td><td>Key not present at its database path. Check spelling, no spaces.</td></tr>
+          <tr><td>BLOCKED</td><td>Key was revoked by the operator. Contact Stargaze support for review.</td></tr>
+          <tr><td>EXPIRED</td><td>Past the expiresAt timestamp. Renew to continue.</td></tr>
+          <tr><td>ERROR</td><td>Request failed entirely: offline, timeout past 5000ms, or locked rules. Retry on stable connection.</td></tr>
+          <tr><td>OVERLAY NEVER APPEARS</td><td>Display over other apps not granted, or FloatService killed by battery optimization. Exempt the panel from battery saving.</td></tr>
+          <tr><td>GLOBAL BLOCK DIALOG</td><td>Kill-switch enabled=false in project_status. This is operator-side; wait for re-open.</td></tr>
+          <tr><td>APP CLOSES ON EXIT</td><td>Intentional: onDestroy kills the process so no hooks linger after the game closes.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <footer>
+    <div class="warn-block"><b>WARNING //</b> Published strictly for educational research, reverse-engineering study, and memory-hooking demonstrations. Usage against live servers violates third-party Terms of Service. Developers assume zero liability for account actions.</div>
+    <div class="credits">
+      <span>BUILT BY <b>KURAMA × STARGAZE</b></span>
+      <span>PUBLISHED &amp; MAINTAINED BY <b>STARGAZE</b></span>
+      <span><a href="index.html#download" style="color:var(--amber)">DOWNLOAD</a></span>
+    </div>
+    <div class="eof">[ EOF // SYSTEM SECURE ]</div>
+  </footer>
+</main>
+
+<script src="assets/app.js"></script>
+</body>
+</html>
