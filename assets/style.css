@@ -194,3 +194,40 @@ footer{padding:40px var(--pad) 56px;color:var(--dim);font-size:11.5px}
   *{transition:none!important}
   .reveal{opacity:1;transform:none}
 }
+
+:root{--ok:#63b879;--warn:#e8c547;--bad:#e05252}
+.ticker-wrap{border-bottom:1px solid var(--line);padding:18px 0 20px}
+.ticker-head{display:flex;align-items:center;gap:14px;padding:0 var(--pad) 14px}
+.tk-title{font-size:10.5px;letter-spacing:.14em;color:var(--dim)}
+.ticker{overflow:hidden}
+.ticker.static{overflow-x:auto}
+.ticker-track{display:flex;gap:14px;width:max-content;padding:0 var(--pad);animation:tick 42s linear infinite}
+.ticker:hover .ticker-track{animation-play-state:paused}
+@keyframes tick{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.tk-card{height:150px;border:1px solid var(--line);background:var(--panel);flex:none;display:flex;flex-direction:column;overflow:hidden;cursor:pointer}
+.tk-ver{width:210px;padding:16px;justify-content:space-between}
+.tk-ver-top{display:flex;align-items:center;gap:8px}
+.tk-dot{width:9px;height:9px;border-radius:50%;flex:none}
+.tk-lab{font-size:9.5px;letter-spacing:.12em;color:var(--dim)}
+.tk-num{font-family:var(--display);font-weight:800;font-size:44px;line-height:.9;color:var(--bone)}
+.tk-name{font-size:10px;letter-spacing:.1em;color:var(--amber)}
+.tk-proof{width:250px}
+.tk-media{height:104px;background:var(--void)}
+.tk-media img{width:100%;height:100%;object-fit:cover;display:block}
+.tk-media iframe{width:100%;height:104%;border:0;display:block}
+.tk-cap{display:flex;gap:8px;align-items:center;justify-content:space-between;padding:8px 12px;font-size:10.5px;color:var(--dim)}
+.tk-cap b{color:var(--amber);white-space:nowrap}
+.dlv{border:1px solid var(--line);background:var(--panel);padding:clamp(22px,3vw,38px);margin-bottom:22px}
+.dlv-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap}
+.dlv-v{font-family:var(--display);font-weight:800;font-size:clamp(34px,4vw,52px);line-height:.95;display:inline-block;margin-right:14px}
+.dlv-name{font-size:11px;letter-spacing:.12em;color:var(--dim)}
+.badge{font-size:10.5px;letter-spacing:.12em;border:1px solid;padding:6px 12px;white-space:nowrap}
+.dlv-meta{font-size:11px;color:var(--dim);letter-spacing:.08em;margin-top:6px;font-variant-numeric:tabular-nums}
+.dlv-desc{margin-top:14px;color:var(--dim);font-size:13px;max-width:72ch}
+.dlv-guide-h{margin-top:20px;font-size:10.5px;letter-spacing:.14em;color:var(--amber)}
+.mini-steps{margin:12px 0 0;padding-left:22px;color:var(--dim);font-size:13px}
+.mini-steps li{margin-top:7px}
+.dlv-actions{margin-top:22px;display:flex;align-items:center;gap:14px}
+.dlv-warn{font-size:11px;letter-spacing:.1em;color:var(--bad)}
+@media(max-width:920px){.tk-card{height:132px}.tk-proof{width:210px}.tk-media{height:88px}.tk-num{font-size:34px}}
+@media(prefers-reduced-motion:reduce){.ticker-track{animation:none}}
