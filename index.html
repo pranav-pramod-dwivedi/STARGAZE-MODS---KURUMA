@@ -1,426 +1,437 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Kurama — Firebase Console</title>
-<link rel="stylesheet" href="glass.css">
-<link rel="stylesheet" href="style.css">
+<title>STARGAZE MODS // Kuruma Executive Panel</title>
+<meta name="description" content="Kuruma executive panel for rooted Android battle arenas. Runtime injection, visual telemetry, anomaly bypass. Build 3.7.1, arm64-v8a.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --void:#0b0a08;
+  --panel:#14120e;
+  --panel-2:#191611;
+  --line:#2c2619;
+  --line-hot:rgba(255,176,0,.35);
+  --amber:#ffb000;
+  --amber-hot:#ff6b1a;
+  --olive:#5a5236;
+  --bone:#ede4d3;
+  --dim:#9c8f78;
+  --mono:'IBM Plex Mono',ui-monospace,'Courier New',monospace;
+  --display:'Big Shoulders Display',Impact,sans-serif;
+  --rail:216px;
+  --pad:clamp(20px,4vw,56px);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  background:var(--void);
+  color:var(--bone);
+  font-family:var(--mono);
+  font-size:15px;
+  line-height:1.65;
+}
+::selection{background:var(--amber);color:var(--void)}
+a{color:inherit;text-decoration:none}
+:focus-visible{outline:2px solid var(--amber);outline-offset:3px}
+.skip{position:absolute;left:-9999px;top:12px;background:var(--amber);color:var(--void);padding:10px 16px;font-weight:600;z-index:99}
+.skip:focus{left:12px}
+
+.rail{
+  position:fixed;inset:0 auto 0 0;width:var(--rail);
+  border-right:1px solid var(--line);
+  display:flex;flex-direction:column;
+  padding:28px 22px;
+  background:var(--void);
+  z-index:10;
+}
+.brand{display:flex;align-items:center;gap:10px}
+.brand .reticle{flex:none}
+.brand-word{font-family:var(--display);font-weight:800;font-size:26px;line-height:.92;letter-spacing:.01em;color:var(--bone)}
+.brand-word span{color:var(--amber)}
+.rail-tag{margin-top:8px;font-size:10px;letter-spacing:.14em;color:var(--dim)}
+.rail nav{margin-top:auto;display:flex;flex-direction:column;gap:2px}
+.rail nav a{
+  padding:9px 10px;font-size:11.5px;letter-spacing:.08em;color:var(--dim);
+  border-left:2px solid transparent;
+}
+.rail nav a:hover{color:var(--bone)}
+.rail nav a.on{color:var(--amber);border-left-color:var(--amber);background:linear-gradient(90deg,rgba(255,176,0,.07),transparent)}
+.rail-status{margin-top:18px;padding-top:14px;border-top:1px solid var(--line);font-size:10.5px;color:var(--dim);letter-spacing:.06em}
+.rail-status b{color:var(--amber);font-weight:500}
+.rail-status div{display:flex;justify-content:space-between;margin-top:5px}
+
+main{margin-left:var(--rail)}
+section{border-bottom:1px solid var(--line)}
+
+.hero{
+  min-height:calc(100vh - 60px);
+  display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);
+  gap:clamp(24px,4vw,64px);
+  padding:clamp(36px,6vh,80px) var(--pad);
+  align-items:center;
+}
+.hero-type{font-family:var(--display);font-weight:800;line-height:.85;font-size:clamp(64px,11vw,168px);letter-spacing:.005em}
+.hero-type .l2{color:var(--amber)}
+.hero-sub{margin-top:26px;max-width:52ch;color:var(--bone)}
+.hero-sub em{font-style:normal;color:var(--amber)}
+.readout{
+  margin-top:30px;display:inline-flex;flex-wrap:wrap;gap:0;
+  border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+}
+.readout span{padding:8px 16px;font-size:11px;letter-spacing:.1em;color:var(--dim)}
+.readout span+b{border-left:1px solid var(--line)}
+.cta-row{margin-top:34px;display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+.btn{
+  display:inline-flex;align-items:center;gap:12px;
+  font-family:var(--mono);font-weight:600;font-size:13.5px;letter-spacing:.06em;
+  padding:16px 26px;border:1px solid var(--amber);cursor:pointer;
+  transition:background .18s cubic-bezier(.16,1,.3,1),transform .12s,border-color .18s;
+}
+.btn-solid{background:var(--amber);color:var(--void)}
+.btn-solid:hover{background:var(--amber-hot);border-color:var(--amber-hot)}
+.btn-solid:active{transform:translateY(1px)}
+.btn-ghost{color:var(--bone);border-color:var(--line)}
+.btn-ghost:hover{border-color:var(--amber);color:var(--amber)}
+.ver{font-size:11px;color:var(--dim);letter-spacing:.08em}
+
+.term{
+  border:1px solid var(--line);
+  background:var(--panel);
+  cursor:pointer;
+  box-shadow:0 0 0 1px rgba(0,0,0,.4),inset 0 0 60px rgba(255,176,0,.03);
+}
+.term-bar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px 14px;border-bottom:1px solid var(--line);
+  font-size:10.5px;letter-spacing:.12em;color:var(--dim);
+  background:repeating-linear-gradient(0deg,rgba(255,176,0,.03) 0 1px,transparent 1px 3px);
+}
+.term-bar b{color:var(--amber);font-weight:500}
+.term-body{
+  padding:18px 18px 22px;font-size:12.5px;line-height:1.9;min-height:300px;
+  background:repeating-linear-gradient(0deg,rgba(0,0,0,.18) 0 1px,transparent 1px 3px);
+}
+.term-body .ln{white-space:pre-wrap;word-break:break-all}
+.t-plus{color:var(--amber)}
+.t-warn{color:var(--amber-hot)}
+.t-ok{color:var(--bone)}
+.t-dim{color:var(--dim)}
+.cursor{display:inline-block;width:8px;height:14px;background:var(--amber);vertical-align:-2px;animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+
+.meta-strip{
+  display:flex;flex-wrap:wrap;
+  border-bottom:1px solid var(--line);
+}
+.meta-strip div{
+  flex:1 1 200px;padding:18px var(--pad);
+  border-right:1px solid var(--line);font-size:11px;letter-spacing:.1em;color:var(--dim);
+}
+.meta-strip div:last-child{border-right:none}
+.meta-strip b{display:block;color:var(--bone);font-weight:500;font-size:13px;margin-top:4px;letter-spacing:.04em}
+
+.sec-head{padding:clamp(40px,7vh,72px) var(--pad) 0}
+.kicker-row{display:flex;align-items:baseline;gap:14px;border-bottom:1px solid var(--line);padding-bottom:14px}
+.kicker-row .idx{font-size:11px;color:var(--amber);letter-spacing:.12em}
+h2{font-family:var(--display);font-weight:800;font-size:clamp(34px,4.5vw,58px);line-height:.95;letter-spacing:.01em}
+.sec-head p{margin-top:14px;color:var(--dim);max-width:60ch}
+
+.spec{padding:0 var(--pad) clamp(40px,7vh,72px)}
+.spec-table{width:100%;border-collapse:collapse;margin-top:8px}
+.spec-table tr{border-bottom:1px solid var(--line)}
+.spec-table tr:first-child{border-top:none}
+.spec-table td{padding:16px 12px 16px 0;vertical-align:top}
+.spec-table td:first-child{width:280px;color:var(--bone);font-weight:600;font-size:13.5px;letter-spacing:.03em}
+.spec-table td:last-child{color:var(--dim);font-size:13px}
+.spec-table code{color:var(--amber);font-size:12px}
+.req-list{margin-top:26px;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1px;background:var(--line);border:1px solid var(--line)}
+.req-list div{background:var(--panel);padding:18px}
+.req-list b{display:block;font-size:12px;letter-spacing:.08em;color:var(--amber);font-weight:600}
+.req-list span{font-size:12px;color:var(--dim)}
+
+.cfg{padding:0 var(--pad) clamp(40px,7vh,72px)}
+.cfg-panel{border:1px solid var(--line);background:var(--panel)}
+.cfg-bar{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--line);padding:10px 16px}
+.cfg-bar span{font-size:10.5px;letter-spacing:.12em;color:var(--dim)}
+.copy-btn{background:none;border:1px solid var(--line);color:var(--dim);font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;padding:6px 14px;cursor:pointer;transition:all .15s}
+.copy-btn:hover{border-color:var(--amber);color:var(--amber)}
+.copy-btn.done{border-color:var(--amber);color:var(--void);background:var(--amber)}
+pre.code{padding:20px;font-size:12.5px;line-height:1.8;overflow-x:auto;color:var(--bone)}
+.c-k{color:var(--amber)}.c-b{color:var(--bone)}.c-n{color:#d98e4a}.c-p{color:var(--dim)}
+
+.dl-band{padding:clamp(48px,8vh,88px) var(--pad)}
+.dl-inner{border:1px solid var(--line-hot);background:var(--panel);padding:clamp(28px,4vw,52px);display:grid;grid-template-columns:minmax(0,1fr) auto;gap:32px;align-items:center}
+.dl-inner h3{font-family:var(--display);font-weight:800;font-size:clamp(30px,3.6vw,46px);line-height:.95}
+.dl-inner p{margin-top:12px;color:var(--dim);font-size:13px;max-width:52ch}
+.hash-row{margin-top:18px;display:flex;flex-wrap:wrap;gap:10px 22px;font-size:11px;color:var(--dim);letter-spacing:.06em}
+.hash-row b{color:var(--bone);font-weight:500}
+footer{padding:40px var(--pad) 56px;color:var(--dim);font-size:11.5px}
+footer .eof{text-align:center;margin-top:34px;color:var(--olive);letter-spacing:.14em}
+.warn-block{border:1px solid var(--line);border-left:3px solid var(--amber-hot);padding:16px 20px;margin-top:22px;max-width:70ch;font-size:12px;color:var(--dim)}
+.warn-block b{color:var(--amber-hot);font-weight:600;letter-spacing:.06em}
+
+@media(max-width:920px){
+  :root{--rail:0px}
+  .rail{position:sticky;top:0;inset:auto;width:100%;flex-direction:row;align-items:center;gap:16px;padding:12px 16px;border-right:none;border-bottom:1px solid var(--line)}
+  .rail-tag,.rail-status{display:none}
+  .brand-word{font-size:20px}
+  .rail nav{margin:0 0 0 auto;flex-direction:row;overflow-x:auto;gap:0}
+  .rail nav a{border-left:none;border-bottom:2px solid transparent;white-space:nowrap;padding:8px 10px}
+  .rail nav a.on{border-bottom-color:var(--amber)}
+  main{margin-left:0}
+  .hero{grid-template-columns:1fr;min-height:0;padding-top:48px}
+  .dl-inner{grid-template-columns:1fr}
+  .spec-table td:first-child{width:auto;display:block}
+  .spec-table td{display:block;width:100%;padding-bottom:4px}
+  .spec-table tr td:last-child{padding:0 0 16px}
+}
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .cursor{animation:none}
+  *{transition:none!important}
+}
+.reveal{opacity:0;transform:translateY(14px);transition:opacity .6s cubic-bezier(.16,1,.3,1),transform .6s cubic-bezier(.16,1,.3,1)}
+.reveal.in{opacity:1;transform:none}
+@media(prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none}}
+</style>
 </head>
 <body>
+<a class="skip" href="#download">Skip to download</a>
 
-<div class="lg-bg"></div>
-<div class="lg-blob"></div>
-
-<!-- Read-only banner -->
-<div class="ro-banner" id="roBanner">
-  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
-  READ ONLY MODE — browsing disabled
-</div>
-
-<header>
-  <h1><span class="accent" style="font-size:18px">
-    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-  </span> Kurama <span class="accent">Firebase</span> Console</h1>
-  <div class="header-right">
-    <span class="badge" id="dbStatus">Disconnected</span>
-    <span class="badge" id="nodeCount">—</span>
-    <label class="toggle" data-tip="Auto-refresh 10s" style="margin:0 4px">
-      <input type="checkbox" id="autoRefresh" onchange="toggleAutoRefresh()">
-      <span class="sl"></span>
-    </label>
-    <button class="btn btn-outline btn-xs tt" data-tip="Refresh" onclick="refreshAll()"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg></button>
-    <button class="btn btn-outline btn-xs tt" data-tip="Command Palette (Ctrl+Shift+P)" onclick="openCmdPalette()"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 3a3 3 0 00-3 3v12a3 3 0 003 3 3 3 0 003-3 3 3 0 00-3-3H6a3 3 0 00-3 3 3 3 0 003 3 3 3 0 003-3V6a3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3h12a3 3 0 003-3 3 3 0 00-3-3z"/></svg></button>
-    <button class="btn btn-outline btn-xs tt" data-tip="Shortcuts" onclick="showShortcuts()"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M6 8h.01M10 8h.01M14 8h.01M18 8h.01M8 12h.01M12 12h.01M16 12h.01M8 16h8"/></svg></button>
-    <button class="btn btn-xs tt" id="roToggle" onclick="toggleReadOnly()" style="background:rgba(40,25,25,.4);border:1px solid rgba(80,25,25,.1)" data-tip="Toggle read-only mode (Ctrl+Shift+R)">
-      <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
-      Read Only
-    </button>
+<aside class="rail">
+  <div>
+    <div class="brand">
+      <svg class="reticle" width="34" height="34" viewBox="0 0 34 34" fill="none" aria-hidden="true">
+        <circle cx="17" cy="17" r="12" stroke="#ffb000" stroke-width="1.5"/>
+        <path d="M17 1v9M17 24v9M1 17h9M24 17h9" stroke="#ffb000" stroke-width="1.5"/>
+        <circle cx="17" cy="17" r="2.5" fill="#ff6b1a"/>
+      </svg>
+      <div class="brand-word">STARGAZE<br><span>MODS</span></div>
+    </div>
+    <div class="rail-tag">KURUMA EXECUTIVE PANEL</div>
   </div>
-</header>
+  <nav aria-label="Sections">
+    <a href="#overview">SYSTEM</a>
+    <a href="#modules">MODULES</a>
+    <a href="#config">CONFIG</a>
+    <a href="#download">DOWNLOAD</a>
+  </nav>
+  <div class="rail-status">
+    <div>BUILD <b>3.7.1-STABLE</b></div>
+    <div>ARCH <b>ARM64-V8A</b></div>
+    <div>PRIV <b>ROOT / UID 0</b></div>
+  </div>
+</aside>
 
-<div class="wrapper">
-  <!-- Sidebar -->
-  <div class="sidebar glass" id="sidebar">
-    <div class="sidebar-content">
-      <div class="sidebar-section">
-        <div class="title">Navigation</div>
-        <div class="sidebar-item active tt" data-view="tree" onclick="switchView('tree')" data-tip="Browse database tree">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M8 8l4-4 4 4M8 16l4 4 4-4"/></svg>
-          <span class="txt">Database Tree</span>
-        </div>
-        <div class="sidebar-item tt" data-view="json" onclick="switchView('json')" data-tip="Edit raw JSON data">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H7a2 2 0 00-2 2v5a2 2 0 01-2 2 2 2 0 012 2v5c0 1.1.9 2 2 2h1"/><path d="M16 3h1a2 2 0 012 2v5a2 2 0 002 2 2 2 0 00-2 2v5a2 2 0 01-2 2h-1"/></svg>
-          <span class="txt">JSON View</span>
-        </div>
-        <div class="sidebar-item tt" data-view="keys" onclick="switchView('keys')" data-tip="Manage license keys">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 11-7.778 7.778 5.5 5.5 0 017.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
-          <span class="txt">License Keys</span>
-        </div>
-        <div class="sidebar-item tt" data-view="project" onclick="switchView('project')" data-tip="Project configuration">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
-          <span class="txt">Project</span>
-        </div>
-        <div class="sidebar-item tt" data-view="import" onclick="switchView('import')" data-tip="Import data and keys">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          <span class="txt">Import</span>
-        </div>
-        <div class="sidebar-item tt" data-view="snapshots" onclick="switchView('snapshots')" data-tip="Database snapshots">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
-          <span class="txt">Snapshots</span>
-        </div>
+<main id="top">
+  <section class="hero">
+    <div>
+      <h1 class="hero-type">STAR<span class="l2">GAZE</span><br>MODS</h1>
+      <p class="hero-sub">Kuruma executive panel. An unyielding aim and sight that <em>knows no shadow</em>. Runtime injection, live telemetry, and anomaly shielding for rooted Android battle arenas.</p>
+      <div class="readout">
+        <span>BUILD <b style="color:var(--bone)">3.7.1</b></span>
+        <span>PLATFORM <b style="color:var(--bone)">ANDROID</b></span>
+        <span>OVERLAY <b style="color:var(--bone)">LAYER 2003</b></span>
       </div>
-      <div class="sidebar-divider"></div>
-      <div class="sidebar-section">
-        <div class="title">Quick Paths</div>
-        <div class="sidebar-item tt" onclick="navigateTo('license_keys')" style="font-size:11px;padding:5px 12px" data-tip="Go to /license_keys">
-          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>
-          <span class="txt">/license_keys</span>
-        </div>
-        <div class="sidebar-item tt" onclick="navigateTo('project_status')" style="font-size:11px;padding:5px 12px" data-tip="Go to /project_status">
-          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>
-          <span class="txt">/project_status</span>
-        </div>
-        <div class="sidebar-item tt" onclick="navigateTo('')" style="font-size:11px;padding:5px 12px" data-tip="Go to root /">
-          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>
-          <span class="txt">/ (root)</span>
-        </div>
-      </div>
-      <div class="sidebar-divider"></div>
-      <div class="sidebar-section">
-        <div class="title">Bookmarks</div>
-        <div id="bookmarkList"><div style="font-size:11px;opacity:.4;padding:8px">No bookmarks</div></div>
+      <div class="cta-row">
+        <a class="btn btn-solid" href="https://github.com/pranav-pramod-dwivedi/STARGAZE-MODS---KURUMA/releases/latest" id="download">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M7 1v8m0 0L3.5 5.5M7 9l3.5-3.5M1.5 12.5h11" stroke="currentColor" stroke-width="1.6"/></svg>
+          DOWNLOAD APK
+        </a>
+        <a class="btn btn-ghost" href="#modules">VIEW MODULES</a>
+        <span class="ver">v3.7.1 &middot; 60 FPS OVERLAY &middot; FREE</span>
       </div>
     </div>
-  </div>
-  <div class="sidebar-resize" id="sidebarResize"></div>
-
-  <!-- Main -->
-  <div class="main glass" id="mainArea">
-
-    <!-- ====== TREE VIEW ====== -->
-    <div class="view" id="view-tree">
-      <div class="view-header">
-        <div>
-          <h2><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M8 8l4-4 4 4M8 16l4 4 4-4"/></svg> Database Tree</h2>
-          <div class="path-bar" id="pathBar"><span class="root" onclick="navigateTo('')">/</span></div>
-        </div>
-        <div class="view-actions">
-          <button class="btn btn-outline btn-xs ro-hide" onclick="collapseAll()"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="12" x2="15" y2="12"/></svg> Collapse</button>
-          <button class="btn btn-outline btn-xs ro-hide" onclick="expandAll()"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg> Expand</button>
-          <button class="btn btn-outline btn-xs ro-hide" onclick="showAddNodeModal('')"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Add</button>
-          <button class="btn btn-outline btn-xs ro-hide" onclick="exportDb()"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Export</button>
-        </div>
-      </div>
-      <div class="tbar">
-        <div class="search-wrap">
-          <span class="si"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
-          <input id="treeSearch" placeholder="Search nodes (key:value)" oninput="filterTree()">
-        </div>
-        <button class="btn btn-outline btn-xs" onclick="copyPath()" id="copyPathBtn" style="display:none"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> Copy Path</button>
-      </div>
-      <div id="treeContainer"><div class="loading"><div class="sp"></div>Loading database...</div></div>
+    <div class="term" id="term" role="button" tabindex="0" aria-label="Deployment log, click to replay">
+      <div class="term-bar"><span>KURUMA://core/injector.sh</span><b>&#9679; LIVE</b></div>
+      <div class="term-body" id="termBody" aria-live="polite"></div>
     </div>
+  </section>
 
-    <!-- ====== JSON VIEW ====== -->
-    <div class="view" id="view-json" style="display:none">
-      <div class="view-header">
-        <h2><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H7a2 2 0 00-2 2v5a2 2 0 01-2 2 2 2 0 012 2v5c0 1.1.9 2 2 2h1"/><path d="M16 3h1a2 2 0 012 2v5a2 2 0 002 2 2 2 0 00-2 2v5a2 2 0 01-2 2h-1"/></svg> Raw JSON</h2>
-        <div class="view-actions">
-          <button class="btn btn-outline btn-xs" onclick="switchView('tree')"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M8 8l4-4 4 4M8 16l4 4 4-4"/></svg> Tree View</button>
-          <button class="btn btn-primary btn-xs ro-hide" onclick="saveRawJson()"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Save</button>
-        </div>
-      </div>
-      <div style="height:calc(100vh - 120px);display:flex;flex-direction:column">
-        <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap">
-          <span style="font-size:11px;opacity:.5">Editing entire database.</span>
-          <button class="btn btn-outline btn-xs" onclick="formatRawJson()"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg> Format</button>
-          <button class="btn btn-outline btn-xs" onclick="minifyRawJson()"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/></svg> Minify</button>
-          <button class="btn btn-outline btn-xs" onclick="loadRawJson()"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg> Reload</button>
-          <span id="rawJsonStatus" style="font-size:11px;opacity:.5"></span>
-        </div>
-        <textarea class="inp" id="rawJsonEditor" style="flex:1;min-height:200px;font-family:monospace;font-size:11px;resize:none;padding:12px;tab-size:2"></textarea>
+  <div class="meta-strip reveal">
+    <div>TARGET<b>COM.DTS.FREEFIRETH</b></div>
+    <div>HOOK BASE<b>LIBIL2CPP.SO</b></div>
+    <div>PIPELINE<b>OPENGL ES / VULKAN</b></div>
+    <div>TRANSPORT<b>FIREBASE RTDB</b></div>
+  </div>
+
+  <section id="overview">
+    <div class="sec-head reveal">
+      <div class="kicker-row"><span class="idx">01</span><h2>System overview</h2></div>
+      <p>Attaches to active PIDs via superuser privileges, intercepts 3D coordinate matrices and entity vectors from the centralized memory space, and projects telemetry onto an isolated system overlay layer. Published for educational research and memory-hooking study.</p>
+    </div>
+    <div class="spec reveal">
+      <div class="req-list">
+        <div><b>MAGISK / KERNELSU</b><span>Root manager with UID 0 granted to the injector shell</span></div>
+        <div><b>ARM64-V8A DEVICE</b><span>64-bit ARM CPU, Android 10 or newer recommended</span></div>
+        <div><b>STOCK GAME INSTALL</b><span>Untouched APK from the official source, no prior patches</span></div>
+        <div><b>SHIZUKU (OPTIONAL)</b><span>Shell-level access without permanent root on supported setups</span></div>
       </div>
     </div>
+  </section>
 
-    <!-- ====== KEYS VIEW ====== -->
-    <div class="view" id="view-keys" style="display:none">
-      <div class="view-header">
-        <h2><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 11-7.778 7.778 5.5 5.5 0 017.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg> License Keys</h2>
-        <div class="view-actions">
-          <button class="btn btn-success btn-xs ro-hide tt" onclick="generateKeys()" data-tip="Bulk generate keys"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="2"/><circle cx="8" cy="8" r="1.5"/><circle cx="16" cy="8" r="1.5"/><circle cx="8" cy="16" r="1.5"/><circle cx="16" cy="16" r="1.5"/></svg> Generate</button>
-          <button class="btn btn-outline btn-xs ro-hide tt" onclick="addSingleKey()" data-tip="Add one key manually"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Add</button>
-          <button class="btn btn-danger btn-xs ro-hide" onclick="bulkAction('delete')" id="bulkDeleteBtn" style="display:none"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg> Delete</button>
-          <button class="btn btn-warning btn-xs ro-hide" onclick="bulkAction('block')" id="bulkBlockBtn" style="display:none"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg> Block</button>
-          <button class="btn btn-success btn-xs ro-hide" onclick="bulkAction('unblock')" id="bulkUnblockBtn" style="display:none"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Unblock</button>
-          <button class="btn btn-warning btn-xs ro-hide" onclick="bulkAction('expire')" id="bulkExpireBtn" style="display:none"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Expire Now</button>
-          <span class="sel-count" id="selCount"></span>
-        </div>
-      </div>
-      <div class="stats-row" id="keysStats"></div>
-      <div class="tbar">
-        <div class="search-wrap">
-          <span class="si"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
-          <input id="keysSearch" placeholder="Search keys..." oninput="renderKeysDelayed()">
-        </div>
-        <select class="inp" id="keysFilterStatus" onchange="renderKeysDelayed()" style="width:auto;min-width:100px">
-          <option value="all">All Keys</option>
-          <option value="valid">Valid</option>
-          <option value="expired">Expired</option>
-          <option value="blocked">Blocked</option>
-          <option value="noexpiry">No Expiry</option>
-        </select>
-        <select class="inp" id="keysSort" onchange="renderKeysDelayed()" style="width:auto;min-width:100px">
-          <option value="key">Sort by Key</option>
-          <option value="expires">Sort by Expiry</option>
-          <option value="status">Sort by Status</option>
-        </select>
-        <button class="btn btn-outline btn-xs tt" data-tip="Export JSON" onclick="exportKeys()"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></button>
-        <button class="btn btn-outline btn-xs tt" data-tip="Export CSV" onclick="exportKeysCSV()"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg></button>
-        <button class="btn btn-outline btn-xs ro-hide tt" data-tip="Extend expiry +30d" onclick="extendKeyExpiry(30)"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 18 20 15 17 18"/><path d="M4 16a4 4 0 004-4V9a4 4 0 018 0v3a4 4 0 004 4"/><circle cx="12" cy="20" r="2"/></svg> +30d</button>
-      </div>
-      <div id="keysContainer"><div class="loading"><div class="sp"></div>Loading...</div></div>
-      <div id="keysPagination" style="display:flex;justify-content:center;gap:6px;margin-top:10px"></div>
+  <section id="modules">
+    <div class="sec-head reveal">
+      <div class="kicker-row"><span class="idx">02</span><h2>Combat modules</h2></div>
+      <p>Three weapon systems, twelve modules. Every module reads live memory and renders through the isolated overlay pipeline.</p>
     </div>
 
-    <!-- ====== PROJECT VIEW ====== -->
-    <div class="view" id="view-project" style="display:none">
-      <div class="view-header"><h2><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg> Project Settings</h2></div>
-      <div id="projectContainer"></div>
+    <div class="spec reveal">
+      <table class="spec-table">
+        <caption class="sr-only" style="position:absolute;left:-9999px">Aim engine modules</caption>
+        <tbody>
+          <tr><td>MEMORY POINTER HOOK</td><td>Intercepts <code>Transform_GetPosition</code> to compute XYZ coordinate offsets instantly</td></tr>
+          <tr><td>FOV MATRIX SCALER</td><td>Interactive field-of-view bounding circle with configurable pixel tolerance</td></tr>
+          <tr><td>ORGANIC SMOOTHING</td><td>LERP + bezier curve interpolation tuned to mimic human input curves</td></tr>
+          <tr><td>TARGET PRIORITY</td><td>Real-time sorting by distance, health, and crosshair proximity</td></tr>
+        </tbody>
+      </table>
+      <table class="spec-table" style="margin-top:34px">
+        <tbody>
+          <tr><td>CHAMS OVERLAY</td><td>Patches <code>glDepthFunc</code> to render entities through solid geometry</td></tr>
+          <tr><td>SKELETAL WIREFRAMES</td><td>Queries <code>GetBoneTransform</code> to map joint skeletons and posture vectors</td></tr>
+          <tr><td>3D BOUNDING BOXES</td><td>Dynamic range-finder with distance, health, and equipment arrays</td></tr>
+          <tr><td>DROP RADAR</td><td>Filters ground items, supply crates, and vehicles onto the radar UI</td></tr>
+        </tbody>
+      </table>
+      <table class="spec-table" style="margin-top:34px">
+        <tbody>
+          <tr><td>MEMORY MASKING</td><td>Freezes and hides modified values across randomized virtual address spaces</td></tr>
+          <tr><td>LOG INVALIDATION</td><td>Hooks <code>__android_log_print</code> to intercept and wipe security flags</td></tr>
+          <tr><td>SIGNATURE SPOOFER</td><td>Emulates clean device identification to obfuscate the root environment</td></tr>
+          <tr><td>RUNTIME ENCRYPTION</td><td>Obfuscates offset patterns during active memory scanning windows</td></tr>
+        </tbody>
+      </table>
     </div>
+  </section>
 
-    <!-- ====== IMPORT VIEW ====== -->
-    <div class="view" id="view-import" style="display:none">
-      <div class="view-header"><h2><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Import / Add Data</h2></div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
-        <div class="card glass">
-          <h3><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Add Single Node</h3>
-          <div class="fg"><label>Path</label><input class="inp" id="importPath" placeholder="license_keys/MY-KEY"></div>
-          <div class="fg"><label>Value (JSON)</label><textarea class="inp" id="importValue" style="min-height:80px" placeholder='{"expiresAt": 1893456000000}'></textarea></div>
-          <button class="btn btn-primary ro-hide" onclick="importNode()"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Import</button>
-          <span class="importStatus" style="margin-left:8px;font-size:12px;opacity:.5"></span>
-        </div>
-        <div class="card glass">
-          <h3><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16.5 9.4l-9-5.19M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 002 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg> Bulk Import JSON</h3>
-          <div class="fg"><label>Root path (optional)</label><input class="inp" id="bulkImportPath" placeholder="Leave empty for root"></div>
-          <div class="fg"><label>JSON payload</label><textarea class="inp" id="bulkImportJson" style="min-height:120px"></textarea></div>
-          <button class="btn btn-warning ro-hide" onclick="bulkImport()"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16.5 9.4l-9-5.19M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 002 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg> Import</button>
-          <span class="importStatus" style="font-size:12px;opacity:.5"></span>
-        </div>
-        <div class="card glass" style="grid-column:1/-1">
-          <h3><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 11-7.778 7.778 5.5 5.5 0 017.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg> Batch Add License Keys</h3>
-          <div class="fg"><label>One per line — key or key:timestampMs or key:daysFromNow</label><textarea class="inp" id="batchKeysArea" style="min-height:80px" placeholder="KEY-001:1893456000000&#10;KEY-002:30d&#10;KEY-003"></textarea></div>
-          <div class="fr">
-            <button class="btn btn-success ro-hide" onclick="batchAddKeys()"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Batch Add</button>
-            <span class="importStatus" style="font-size:12px;opacity:.5"></span>
-          </div>
-        </div>
+  <section id="config">
+    <div class="sec-head reveal">
+      <div class="kicker-row"><span class="idx">03</span><h2>config.json</h2></div>
+      <p>Panel behavior ships as a flat config. Edit values, push, relaunch the overlay.</p>
+    </div>
+    <div class="cfg reveal">
+      <div class="cfg-panel">
+        <div class="cfg-bar"><span>KURUMA-MODS/config.json</span><button class="copy-btn" id="copyBtn" type="button">COPY</button></div>
+<pre class="code" id="cfgCode">{
+  <span class="c-k">"aimbot"</span>: { <span class="c-k">"enabled"</span>: <span class="c-b">true</span>, <span class="c-k">"fov"</span>: <span class="c-n">120</span>, <span class="c-k">"smoothing"</span>: <span class="c-n">4.5</span>, <span class="c-k">"target_bone"</span>: <span class="c-b">"head"</span> },
+  <span class="c-k">"esp"</span>: { <span class="c-k">"enabled"</span>: <span class="c-b">true</span>, <span class="c-k">"chams"</span>: <span class="c-b">true</span>, <span class="c-k">"skeleton"</span>: <span class="c-b">true</span>, <span class="c-k">"distance"</span>: <span class="c-b">true</span>, <span class="c-k">"boxes_3d"</span>: <span class="c-b">true</span> },
+  <span class="c-k">"bypass"</span>: { <span class="c-k">"mask_memory"</span>: <span class="c-b">true</span>, <span class="c-k">"nullify_logs"</span>: <span class="c-b">true</span>, <span class="c-k">"spoof_signature"</span>: <span class="c-b">true</span> }
+}</pre>
       </div>
     </div>
+  </section>
 
-    <!-- ====== SNAPSHOTS VIEW ====== -->
-    <div class="view" id="view-snapshots" style="display:none">
-      <div class="view-header">
-        <h2><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg> Snapshots</h2>
-        <div class="view-actions">
-          <button class="btn btn-primary btn-xs ro-hide" onclick="takeSnapshot()"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg> Take Snapshot</button>
+  <section id="get" class="dl-band">
+    <div class="dl-inner reveal">
+      <div>
+        <h3>Deploy to your<br>battle arena</h3>
+        <p>Grab the latest signed build from releases. Verify the archive before flashing, grant root to the injector, and launch from the panel home.</p>
+        <div class="hash-row">
+          <span>VERSION <b>3.7.1-STABLE</b></span>
+          <span>ABI <b>ARM64-V8A</b></span>
+          <span>CHECK <b>SHA-256 ON RELEASE PAGE</b></span>
         </div>
       </div>
-      <p style="font-size:12px;opacity:.5;margin-bottom:14px">Save and compare database states. Restore or diff any snapshot.</p>
-      <div id="snapshotsContainer"><div class="loading"><div class="sp"></div>No snapshots yet</div></div>
+      <a class="btn btn-solid" href="https://github.com/pranav-pramod-dwivedi/STARGAZE-MODS---KURUMA/releases/latest" style="padding:20px 34px;font-size:15px">
+        GET THE PANEL
+        <svg width="15" height="15" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M2 12L12 2m0 0H4.5M12 2v7.5" stroke="currentColor" stroke-width="1.6"/></svg>
+      </a>
     </div>
+  </section>
 
-  </div>
-</div>
+  <footer>
+    <div class="warn-block"><b>WARNING //</b> Published strictly for educational research, reverse-engineering study, and memory-hooking demonstrations. Usage against live servers violates third-party Terms of Service. Developers assume zero liability for account actions.</div>
+    <p style="margin-top:26px">STARGAZE MODS &middot; Kuruma executive panel &middot; <a href="https://github.com/pranav-pramod-dwivedi/STARGAZE-MODS---KURUMA" style="color:var(--amber)">GitHub repository</a></p>
+    <div class="eof">[ EOF // SYSTEM SECURE ]</div>
+  </footer>
+</main>
 
-<!-- Detail Panel -->
-<div class="detail-panel glass" id="detailPanel">
-  <div class="dh">
-    <h3 id="detailTitle">Node</h3>
-    <button class="btn btn-ghost btn-xs" onclick="closeDetail()"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
-  </div>
-  <div class="dpath" id="detailPath">/</div>
-  <div class="fg"><label>Key</label><input class="inp" id="detailKey" readonly style="opacity:.6"></div>
-  <div class="fg"><label>Type</label><input class="inp" id="detailType" readonly style="opacity:.6;font-family:monospace"></div>
-  <div class="fg"><label>Size</label><input class="inp" id="detailSize" readonly style="opacity:.6"></div>
-  <div class="fg"><label>Value (JSON)</label><textarea class="inp" id="detailValue" style="min-height:120px;font-family:monospace"></textarea></div>
-  <div class="fr">
-    <button class="btn btn-primary btn-sm ro-hide" onclick="saveDetail()"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Save</button>
-    <button class="btn btn-outline btn-sm ro-hide" onclick="duplicateDetail()"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> Duplicate</button>
-    <button class="btn btn-outline btn-sm" onclick="downloadDetail()"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Download</button>
-    <button class="btn btn-danger btn-sm ro-hide" onclick="deleteDetail()"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg> Delete</button>
-    <span id="detailStatus" style="font-size:12px;opacity:.5;align-self:center"></span>
-  </div>
-  <div style="margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,20,20,.06)">
-    <label style="font-size:9px;text-transform:uppercase;letter-spacing:1.5px;opacity:.4">Move / Rename</label>
-    <div class="fr" style="margin-top:4px">
-      <input class="inp" id="detailMovePath" placeholder="new/path" style="flex:1;font-family:monospace;font-size:11px">
-      <button class="btn btn-warning btn-sm ro-hide" onclick="moveDetail()"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 9 2 12 5 15"/><polyline points="9 5 12 2 15 5"/><polyline points="15 19 12 22 9 19"/><polyline points="19 9 22 12 19 15"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="12" y1="2" x2="12" y2="22"/></svg> Move</button>
-    </div>
-  </div>
-</div>
+<script>
+(function(){
+  var lines=[
+    ["t-plus","[+] Initializing Kuruma Mods Executive Suite..."],
+    ["t-plus","[+] Verifying Superuser Permissions: GRANTED (UID 0)"],
+    ["t-plus","[+] Hooking target PID 14892 -> com.dts.freefireth"],
+    ["t-dim","[+] Locating libil2cpp.so base... [0x7f83a12000]"],
+    ["t-plus","[+] Applying aim vector hook offset [0x1A2F4B0] -> PATCHED"],
+    ["t-plus","[+] Applying ESP glDepthFunc override -> ACTIVE"],
+    ["t-ok","[+] Log nullifier initialized. Zero tracking logs."],
+    ["t-ok","[+] Rendering overlay on layer 2003 (TYPE_APPLICATION_OVERLAY)"],
+    ["t-warn","[!] EXECUTION STABLE. ENTERING WAR THEATER."]
+  ];
+  var body=document.getElementById('termBody'),timer=null,reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function renderAll(){
+    stop();
+    body.innerHTML='';
+    lines.forEach(function(l){
+      var d=document.createElement('div');
+      d.className='ln '+l[0];
+      d.textContent=l[1];
+      body.appendChild(d);
+    });
+    cursor();
+  }
+  function cursor(){
+    var c=document.createElement('span');c.className='cursor';c.id='cur';
+    body.lastChild&&body.appendChild(c);
+  }
+  function stop(){if(timer){clearInterval(timer);timer=null}}
+  function type(){
+    stop();
+    body.innerHTML='';
+    var li=0,ci=0,cur=document.createElement('span');cur.className='cursor';
+    var curLine=null;
+    timer=setInterval(function(){
+      if(li>=lines.length){clearInterval(timer);timer=null;return}
+      if(!curLine){
+        curLine=document.createElement('div');
+        curLine.className='ln '+lines[li][0];
+        body.appendChild(curLine);
+      }
+      var txt=lines[li][1];
+      curLine.textContent=txt.slice(0,++ci);
+      curLine.appendChild(cur);
+      if(ci>=txt.length){li++;ci=0;curLine=null}
+    },18);
+  }
+  if(reduced){renderAll()}else{type()}
+  var term=document.getElementById('term');
+  term.addEventListener('click',function(){reduced?renderAll():type()});
+  term.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();reduced?renderAll():type()}});
 
-<!-- Add Node Modal -->
-<div class="modal-overlay" id="addNodeModal">
-  <div class="modal glass glass-thick">
-    <h3><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Add Child Node</h3>
-    <div class="fg"><label>Parent Path</label><input class="inp" id="addNodePath" readonly style="opacity:.6;font-family:monospace"></div>
-    <div class="fg"><label>Key</label><input class="inp" id="addNodeKey" placeholder="node-name"></div>
-    <div class="fg"><label>Type</label>
-      <select class="inp" id="addNodeType" onchange="toggleAddNodeValue()" style="width:auto">
-        <option value="object">Object {}</option>
-        <option value="array">Array []</option>
-        <option value="string">String</option>
-        <option value="number">Number</option>
-        <option value="boolean">Boolean</option>
-        <option value="null">Null</option>
-      </select>
-    </div>
-    <div class="fg" id="addNodeValueGroup"><label>Value</label>
-      <textarea class="inp" id="addNodeValue" style="min-height:80px;font-family:monospace" placeholder='{"key": "value"}'></textarea>
-    </div>
-    <div class="fr">
-      <button class="btn btn-primary" onclick="confirmAddNode()"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Create</button>
-      <button class="btn btn-outline" onclick="closeModal('addNodeModal')">Cancel</button>
-      <span id="addNodeStatus" style="font-size:12px;opacity:.5"></span>
-    </div>
-  </div>
-</div>
+  var io=new IntersectionObserver(function(es){
+    es.forEach(function(en){if(en.isIntersecting){en.target.classList.add('in');io.unobserve(en.target)}});
+  },{threshold:.12});
+  document.querySelectorAll('.reveal').forEach(function(el){io.observe(el)});
 
-<!-- Generate Keys Modal -->
-<div class="modal-overlay" id="genKeysModal">
-  <div class="modal glass glass-thick">
-    <h3><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="2"/><circle cx="8" cy="8" r="1.5"/><circle cx="16" cy="8" r="1.5"/><circle cx="8" cy="16" r="1.5"/><circle cx="16" cy="16" r="1.5"/></svg> Generate License Keys</h3>
-    <div class="fg"><label>Prefix</label><input class="inp" id="genPrefix" value="KRM-" placeholder="KRM-"></div>
-    <div class="fg"><label>Count</label><input class="inp" id="genCount" value="5" type="number" min="1" max="100" style="width:80px"></div>
-    <div class="fg"><label>Key Format</label>
-      <select class="inp" id="genFormat" style="width:auto">
-        <option value="hex">Hex (KRM-A1B2C3D4)</option>
-        <option value="alphanum">Alphanumeric (KRM-X9K2M7Q1)</option>
-        <option value="uuid">UUID Short (KRM-a1b2c3d4)</option>
-      </select>
-    </div>
-    <div class="fg"><label>Expiry Preset</label>
-      <select class="inp" id="genExpiry" style="width:auto">
-        <option value="0">No expiry</option>
-        <option value="86400000">1 day</option>
-        <option value="604800000">7 days</option>
-        <option value="2592000000">30 days</option>
-        <option value="31536000000">1 year</option>
-        <option value="custom">Custom</option>
-      </select>
-    </div>
-    <div class="fg" id="genCustomExpiryGroup" style="display:none"><label>Custom Expiry</label><input class="inp" id="genCustomExpiry" type="datetime-local" style="width:auto"></div>
-    <div class="fg"><label class="toggle" style="display:inline-block;vertical-align:middle">
-      <input type="checkbox" id="genBlocked"><span class="sl"></span>
-    </label> <span style="font-size:12px;opacity:.5">Mark as blocked on creation</span></div>
-    <div class="fr">
-      <button class="btn btn-success" onclick="previewGenerateKeys()"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg> Preview</button>
-      <button class="btn btn-primary" onclick="confirmGenerateKeys()"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="2"/><circle cx="8" cy="8" r="1.5"/><circle cx="16" cy="8" r="1.5"/><circle cx="8" cy="16" r="1.5"/><circle cx="16" cy="16" r="1.5"/></svg> Generate</button>
-      <button class="btn btn-outline" onclick="closeModal('genKeysModal')">Cancel</button>
-      <span id="genKeysStatus" style="font-size:12px;opacity:.5"></span>
-    </div>
-    <div id="genKeysPreview" style="margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,20,20,.06);max-height:200px;overflow-y:auto">
-      <pre style="font-size:11px;opacity:.6">Preview will appear here</pre>
-    </div>
-  </div>
-</div>
+  var secs=document.querySelectorAll('section[id]');
+  var links=document.querySelectorAll('.rail nav a');
+  var ioNav=new IntersectionObserver(function(es){
+    es.forEach(function(en){
+      if(en.isIntersecting){
+        links.forEach(function(a){a.classList.toggle('on',a.getAttribute('href')==='#'+en.target.id)});
+      }
+    });
+  },{rootMargin:'-40% 0px -55% 0px'});
+  secs.forEach(function(s){ioNav.observe(s)});
 
-<!-- Move Modal -->
-<div class="modal-overlay" id="moveNodeModal">
-  <div class="modal glass glass-thick">
-    <h3><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 9 2 12 5 15"/><polyline points="9 5 12 2 15 5"/><polyline points="15 19 12 22 9 19"/><polyline points="19 9 22 12 19 15"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="12" y1="2" x2="12" y2="22"/></svg> Move / Rename Node</h3>
-    <div class="fg"><label>Current Path</label><input class="inp" id="moveCurrentPath" readonly style="opacity:.6;font-family:monospace"></div>
-    <div class="fg"><label>New Path</label><input class="inp" id="moveNewPath" placeholder="new/path/here" style="font-family:monospace"></div>
-    <div class="fr">
-      <button class="btn btn-warning" onclick="confirmMoveNode()"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 9 2 12 5 15"/><polyline points="9 5 12 2 15 5"/><polyline points="15 19 12 22 9 19"/><polyline points="19 9 22 12 19 15"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="12" y1="2" x2="12" y2="22"/></svg> Move</button>
-      <button class="btn btn-outline" onclick="closeModal('moveNodeModal')">Cancel</button>
-      <span id="moveNodeStatus" style="font-size:12px;opacity:.5"></span>
-    </div>
-  </div>
-</div>
-
-<!-- Diff Modal -->
-<div class="modal-overlay" id="diffModal">
-  <div class="modal glass glass-thick" style="width:680px">
-    <h3 id="diffTitle"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg> Diff</h3>
-    <div id="diffContent" style="font-family:monospace;font-size:11px;max-height:500px;overflow:auto"></div>
-    <button class="btn btn-outline btn-sm" style="margin-top:14px" onclick="closeModal('diffModal')">Close</button>
-  </div>
-</div>
-
-<!-- Shortcuts Modal -->
-<div class="modal-overlay" id="shortcutsModal">
-  <div class="modal glass glass-thick" style="width:480px">
-    <h3><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M6 8h.01M10 8h.01M14 8h.01M18 8h.01M8 12h.01M12 12h.01M16 12h.01M8 16h8"/></svg> Keyboard Shortcuts</h3>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:12px">
-      <div><kbd class="kbd">/</kbd> or <kbd class="kbd">Ctrl+F</kbd> <span style="opacity:.5">Search</span></div>
-      <div><kbd class="kbd">Escape</kbd> <span style="opacity:.5">Close panel</span></div>
-      <div><kbd class="kbd">R</kbd> <span style="opacity:.5">Refresh</span></div>
-      <div><kbd class="kbd">1</kbd>–<kbd class="kbd">6</kbd> <span style="opacity:.5">Switch views</span></div>
-      <div><kbd class="kbd">A</kbd> <span style="opacity:.5">Add node (tree)</span></div>
-      <div><kbd class="kbd">E</kbd> <span style="opacity:.5">Edit selected</span></div>
-      <div><kbd class="kbd">Delete</kbd> <span style="opacity:.5">Delete selected</span></div>
-      <div><kbd class="kbd">Ctrl+Shift+P</kbd> <span style="opacity:.5">Command palette</span></div>
-      <div><kbd class="kbd">Ctrl+Shift+R</kbd> <span style="opacity:.5">Toggle read-only</span></div>
-      <div><kbd class="kbd">Ctrl+Shift+E</kbd> <span style="opacity:.5">Export DB</span></div>
-    </div>
-    <button class="btn btn-outline btn-sm" style="margin-top:14px" onclick="closeModal('shortcutsModal')">Close</button>
-  </div>
-</div>
-
-<!-- Context Menu -->
-<div class="ctx-menu glass glass-thick" id="ctxMenu">
-  <div class="ctx-item" onclick="ctxEdit()"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> Edit</div>
-  <div class="ctx-item ro-hide" onclick="ctxDuplicate()"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> Duplicate</div>
-  <div class="ctx-item ro-hide" onclick="ctxAddChild()"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Add Child</div>
-  <div class="ctx-item" onclick="ctxCopyPath()"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> Copy Path</div>
-  <div class="ctx-item" onclick="ctxCopyValue()"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/></svg> Copy Value</div>
-  <div class="ctx-item" onclick="ctxBookmark()"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg> Bookmark</div>
-  <div class="ctx-item ro-hide" onclick="ctxMove()"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 9 2 12 5 15"/><polyline points="9 5 12 2 15 5"/><polyline points="15 19 12 22 9 19"/><polyline points="19 9 22 12 19 15"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="12" y1="2" x2="12" y2="22"/></svg> Move / Rename</div>
-  <div class="ctx-divider"></div>
-  <div class="ctx-item" onclick="ctxDownload()"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Download</div>
-  <div class="ctx-divider"></div>
-  <div class="ctx-item danger ro-hide" onclick="ctxDelete()"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg> Delete</div>
-</div>
-
-<!-- Fork Modal -->
-<div class="modal-overlay" id="forkModal">
-  <div class="modal glass glass-thick">
-    <h3><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> Fork Node</h3>
-    <div class="fg"><label>Source Path</label><input class="inp" id="forkCurrentPath" readonly style="opacity:.6;font-family:monospace"></div>
-    <div class="fg"><label>New Path</label><input class="inp" id="forkNewPath" placeholder="new/path/here" style="font-family:monospace"></div>
-    <div class="fg"><label>Value (JSON) — edit before saving</label><textarea class="inp" id="forkValue" style="min-height:100px;font-family:monospace"></textarea></div>
-    <div class="fr">
-      <button class="btn btn-primary" onclick="confirmFork()"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Fork</button>
-      <button class="btn btn-outline" onclick="closeModal('forkModal')">Cancel</button>
-      <span id="forkStatus" style="font-size:12px;opacity:.5"></span>
-    </div>
-  </div>
-</div>
-
-<!-- Confirmation Modal -->
-<div class="modal-overlay" id="confirmOverlay">
-  <div class="modal glass glass-thick">
-    <h3><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> Confirm</h3>
-    <p id="confirmMsg" style="font-size:13px;margin:8px 0 16px;line-height:1.4"></p>
-    <div class="fr">
-      <button class="btn btn-danger" id="confirmBtn"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Confirm</button>
-      <button class="btn btn-outline" id="cancelBtn">Cancel</button>
-    </div>
-  </div>
-</div>
-
-<!-- Command Palette -->
-<div class="cmd-palette-overlay" id="cmdPaletteOverlay"></div>
-<div class="cmd-palette glass glass-thick" id="cmdPalette">
-  <input id="cmdSearch" placeholder="Type a command..." oninput="showCmdResults(this.value)" onkeydown="if(event.key==='Enter'){const sel=document.querySelector('.cmd-item.selected');if(sel)sel.click()}if(event.key==='ArrowDown'){const items=document.querySelectorAll('.cmd-item');const idx=Array.from(items).findIndex(el=>el.classList.contains('selected'));items[idx]?.classList.remove('selected');items[Math.min(idx+1,items.length-1)]?.classList.add('selected')}if(event.key==='ArrowUp'){const items=document.querySelectorAll('.cmd-item');const idx=Array.from(items).findIndex(el=>el.classList.contains('selected'));items[idx]?.classList.remove('selected');items[Math.max(idx-1,0)]?.classList.add('selected')}">
-  <div class="results" id="cmdResults"></div>
-</div>
-
-<!-- Toast -->
-<div class="toast-c" id="toastContainer"></div>
-
-<script src="app.js"></script>
+  document.getElementById('copyBtn').addEventListener('click',function(){
+    var txt=document.getElementById('cfgCode').textContent;
+    var b=this;
+    function done(){b.textContent='COPIED';b.classList.add('done');setTimeout(function(){b.textContent='COPY';b.classList.remove('done')},1400)}
+    if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(done,function(){fallback()})}else{fallback()}
+    function fallback(){
+      var ta=document.createElement('textarea');ta.value=txt;document.body.appendChild(ta);ta.select();
+      try{document.execCommand('copy');done()}catch(e){}
+      document.body.removeChild(ta);
+    }
+  });
+})();
+</script>
 </body>
 </html>
