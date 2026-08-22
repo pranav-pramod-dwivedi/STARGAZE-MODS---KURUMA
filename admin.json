@@ -1,0 +1,53 @@
+{
+  "announcements": [
+    { "msg": "3.7.1-STABLE is live on the green channel. All 2.40.x builds are patched — do not install them.", "ts": "2026-08-21T18:00:00Z" },
+    { "msg": "2.58.3 moved to yellow: works, but run it on a second account only.", "ts": "2026-08-19T12:00:00Z" }
+  ],
+  "versions": [
+    {
+      "v": "3.7.1",
+      "status": "green",
+      "name": "3.7.1-STABLE",
+      "date": "2026-08-20",
+      "desc": "Current production build. Verified working on arm64-v8a with Magisk 27+ and KernelSU. Overlay at layer 2003, config delivery live.",
+      "file": "https://github.com/pranav-pramod-dwivedi/STARGAZE-MODS---KURUMA/releases/latest",
+      "steps": [
+        "Download the APK from the releases page on your device",
+        "Allow installs from unknown apps for your browser or file manager",
+        "Grant the superuser prompt when the panel asks (UID 0 required)",
+        "Enable Display over other apps so the overlay can render",
+        "Activate your license key and wait for OK",
+        "Launch the floating panel inside a match"
+      ]
+    },
+    {
+      "v": "2.58.3",
+      "status": "yellow",
+      "name": "2.58.3-LEGACY",
+      "date": "2026-07-16",
+      "desc": "Older stable line. Still attaches cleanly, but detection heat is higher on this build — second account strongly advised.",
+      "file": "https://github.com/pranav-pramod-dwivedi/STARGAZE-MODS---KURUMA/releases/latest",
+      "steps": [
+        "Download the 2.58.3 APK from releases",
+        "Uninstall any newer build first to avoid signature conflicts",
+        "Install and grant root, then enable Display over other apps",
+        "Use a second account only — do not log your main here"
+      ]
+    },
+    {
+      "v": "2.40.0",
+      "status": "red",
+      "name": "2.40.0-PATCHED",
+      "date": "2026-06-02",
+      "desc": "Server-side patched. Installs but hooks never attach; kept in the archive for reference only.",
+      "file": "",
+      "steps": []
+    }
+  ],
+  "proofs": [
+    { "v": "3.7.1", "media": "assets/proofs/p1.svg", "text": "Chams through solid walls, full squad wipe" },
+    { "v": "3.7.1", "media": "assets/proofs/p2.svg", "text": "Skeletal wireframes holding steady at range" },
+    { "v": "3.7.1", "media": "assets/proofs/p3.svg", "text": "Drop radar tracking crates across the zone" },
+    { "v": "2.58.3", "media": "assets/proofs/p4.svg", "text": "Legacy build overlay still attaching clean" }
+  ]
+}
