@@ -4,200 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>STARGAZE MODS // Kuruma Executive Panel</title>
-<meta name="description" content="Kuruma executive panel for rooted Android battle arenas. Runtime injection, visual telemetry, anomaly bypass. Build 3.7.1, arm64-v8a.">
+<meta name="description" content="Kuruma executive panel for rooted Android battle arenas. Runtime injection, visual telemetry, anomaly bypass. Build 3.7.1, arm64-v8a. A Stargaze x Kurama build.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<style>
-:root{
-  --void:#0b0a08;
-  --panel:#14120e;
-  --panel-2:#191611;
-  --line:#2c2619;
-  --line-hot:rgba(255,176,0,.35);
-  --amber:#ffb000;
-  --amber-hot:#ff6b1a;
-  --olive:#5a5236;
-  --bone:#ede4d3;
-  --dim:#9c8f78;
-  --mono:'IBM Plex Mono',ui-monospace,'Courier New',monospace;
-  --display:'Big Shoulders Display',Impact,sans-serif;
-  --rail:216px;
-  --pad:clamp(20px,4vw,56px);
-}
-*{margin:0;padding:0;box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{
-  background:var(--void);
-  color:var(--bone);
-  font-family:var(--mono);
-  font-size:15px;
-  line-height:1.65;
-}
-::selection{background:var(--amber);color:var(--void)}
-a{color:inherit;text-decoration:none}
-:focus-visible{outline:2px solid var(--amber);outline-offset:3px}
-.skip{position:absolute;left:-9999px;top:12px;background:var(--amber);color:var(--void);padding:10px 16px;font-weight:600;z-index:99}
-.skip:focus{left:12px}
-
-.rail{
-  position:fixed;inset:0 auto 0 0;width:var(--rail);
-  border-right:1px solid var(--line);
-  display:flex;flex-direction:column;
-  padding:28px 22px;
-  background:var(--void);
-  z-index:10;
-}
-.brand{display:flex;align-items:center;gap:10px}
-.brand .reticle{flex:none}
-.brand-word{font-family:var(--display);font-weight:800;font-size:26px;line-height:.92;letter-spacing:.01em;color:var(--bone)}
-.brand-word span{color:var(--amber)}
-.rail-tag{margin-top:8px;font-size:10px;letter-spacing:.14em;color:var(--dim)}
-.rail nav{margin-top:auto;display:flex;flex-direction:column;gap:2px}
-.rail nav a{
-  padding:9px 10px;font-size:11.5px;letter-spacing:.08em;color:var(--dim);
-  border-left:2px solid transparent;
-}
-.rail nav a:hover{color:var(--bone)}
-.rail nav a.on{color:var(--amber);border-left-color:var(--amber);background:linear-gradient(90deg,rgba(255,176,0,.07),transparent)}
-.rail-status{margin-top:18px;padding-top:14px;border-top:1px solid var(--line);font-size:10.5px;color:var(--dim);letter-spacing:.06em}
-.rail-status b{color:var(--amber);font-weight:500}
-.rail-status div{display:flex;justify-content:space-between;margin-top:5px}
-
-main{margin-left:var(--rail)}
-section{border-bottom:1px solid var(--line)}
-
-.hero{
-  min-height:calc(100vh - 60px);
-  display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);
-  gap:clamp(24px,4vw,64px);
-  padding:clamp(36px,6vh,80px) var(--pad);
-  align-items:center;
-}
-.hero-type{font-family:var(--display);font-weight:800;line-height:.85;font-size:clamp(64px,11vw,168px);letter-spacing:.005em}
-.hero-type .l2{color:var(--amber)}
-.hero-sub{margin-top:26px;max-width:52ch;color:var(--bone)}
-.hero-sub em{font-style:normal;color:var(--amber)}
-.readout{
-  margin-top:30px;display:inline-flex;flex-wrap:wrap;gap:0;
-  border-top:1px solid var(--line);border-bottom:1px solid var(--line);
-}
-.readout span{padding:8px 16px;font-size:11px;letter-spacing:.1em;color:var(--dim)}
-.readout span+b{border-left:1px solid var(--line)}
-.cta-row{margin-top:34px;display:flex;gap:14px;flex-wrap:wrap;align-items:center}
-.btn{
-  display:inline-flex;align-items:center;gap:12px;
-  font-family:var(--mono);font-weight:600;font-size:13.5px;letter-spacing:.06em;
-  padding:16px 26px;border:1px solid var(--amber);cursor:pointer;
-  transition:background .18s cubic-bezier(.16,1,.3,1),transform .12s,border-color .18s;
-}
-.btn-solid{background:var(--amber);color:var(--void)}
-.btn-solid:hover{background:var(--amber-hot);border-color:var(--amber-hot)}
-.btn-solid:active{transform:translateY(1px)}
-.btn-ghost{color:var(--bone);border-color:var(--line)}
-.btn-ghost:hover{border-color:var(--amber);color:var(--amber)}
-.ver{font-size:11px;color:var(--dim);letter-spacing:.08em}
-
-.term{
-  border:1px solid var(--line);
-  background:var(--panel);
-  cursor:pointer;
-  box-shadow:0 0 0 1px rgba(0,0,0,.4),inset 0 0 60px rgba(255,176,0,.03);
-}
-.term-bar{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:10px 14px;border-bottom:1px solid var(--line);
-  font-size:10.5px;letter-spacing:.12em;color:var(--dim);
-  background:repeating-linear-gradient(0deg,rgba(255,176,0,.03) 0 1px,transparent 1px 3px);
-}
-.term-bar b{color:var(--amber);font-weight:500}
-.term-body{
-  padding:18px 18px 22px;font-size:12.5px;line-height:1.9;min-height:300px;
-  background:repeating-linear-gradient(0deg,rgba(0,0,0,.18) 0 1px,transparent 1px 3px);
-}
-.term-body .ln{white-space:pre-wrap;word-break:break-all}
-.t-plus{color:var(--amber)}
-.t-warn{color:var(--amber-hot)}
-.t-ok{color:var(--bone)}
-.t-dim{color:var(--dim)}
-.cursor{display:inline-block;width:8px;height:14px;background:var(--amber);vertical-align:-2px;animation:blink 1s steps(1) infinite}
-@keyframes blink{50%{opacity:0}}
-
-.meta-strip{
-  display:flex;flex-wrap:wrap;
-  border-bottom:1px solid var(--line);
-}
-.meta-strip div{
-  flex:1 1 200px;padding:18px var(--pad);
-  border-right:1px solid var(--line);font-size:11px;letter-spacing:.1em;color:var(--dim);
-}
-.meta-strip div:last-child{border-right:none}
-.meta-strip b{display:block;color:var(--bone);font-weight:500;font-size:13px;margin-top:4px;letter-spacing:.04em}
-
-.sec-head{padding:clamp(40px,7vh,72px) var(--pad) 0}
-.kicker-row{display:flex;align-items:baseline;gap:14px;border-bottom:1px solid var(--line);padding-bottom:14px}
-.kicker-row .idx{font-size:11px;color:var(--amber);letter-spacing:.12em}
-h2{font-family:var(--display);font-weight:800;font-size:clamp(34px,4.5vw,58px);line-height:.95;letter-spacing:.01em}
-.sec-head p{margin-top:14px;color:var(--dim);max-width:60ch}
-
-.spec{padding:0 var(--pad) clamp(40px,7vh,72px)}
-.spec-table{width:100%;border-collapse:collapse;margin-top:8px}
-.spec-table tr{border-bottom:1px solid var(--line)}
-.spec-table tr:first-child{border-top:none}
-.spec-table td{padding:16px 12px 16px 0;vertical-align:top}
-.spec-table td:first-child{width:280px;color:var(--bone);font-weight:600;font-size:13.5px;letter-spacing:.03em}
-.spec-table td:last-child{color:var(--dim);font-size:13px}
-.spec-table code{color:var(--amber);font-size:12px}
-.req-list{margin-top:26px;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1px;background:var(--line);border:1px solid var(--line)}
-.req-list div{background:var(--panel);padding:18px}
-.req-list b{display:block;font-size:12px;letter-spacing:.08em;color:var(--amber);font-weight:600}
-.req-list span{font-size:12px;color:var(--dim)}
-
-.cfg{padding:0 var(--pad) clamp(40px,7vh,72px)}
-.cfg-panel{border:1px solid var(--line);background:var(--panel)}
-.cfg-bar{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--line);padding:10px 16px}
-.cfg-bar span{font-size:10.5px;letter-spacing:.12em;color:var(--dim)}
-.copy-btn{background:none;border:1px solid var(--line);color:var(--dim);font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;padding:6px 14px;cursor:pointer;transition:all .15s}
-.copy-btn:hover{border-color:var(--amber);color:var(--amber)}
-.copy-btn.done{border-color:var(--amber);color:var(--void);background:var(--amber)}
-pre.code{padding:20px;font-size:12.5px;line-height:1.8;overflow-x:auto;color:var(--bone)}
-.c-k{color:var(--amber)}.c-b{color:var(--bone)}.c-n{color:#d98e4a}.c-p{color:var(--dim)}
-
-.dl-band{padding:clamp(48px,8vh,88px) var(--pad)}
-.dl-inner{border:1px solid var(--line-hot);background:var(--panel);padding:clamp(28px,4vw,52px);display:grid;grid-template-columns:minmax(0,1fr) auto;gap:32px;align-items:center}
-.dl-inner h3{font-family:var(--display);font-weight:800;font-size:clamp(30px,3.6vw,46px);line-height:.95}
-.dl-inner p{margin-top:12px;color:var(--dim);font-size:13px;max-width:52ch}
-.hash-row{margin-top:18px;display:flex;flex-wrap:wrap;gap:10px 22px;font-size:11px;color:var(--dim);letter-spacing:.06em}
-.hash-row b{color:var(--bone);font-weight:500}
-footer{padding:40px var(--pad) 56px;color:var(--dim);font-size:11.5px}
-footer .eof{text-align:center;margin-top:34px;color:var(--olive);letter-spacing:.14em}
-.warn-block{border:1px solid var(--line);border-left:3px solid var(--amber-hot);padding:16px 20px;margin-top:22px;max-width:70ch;font-size:12px;color:var(--dim)}
-.warn-block b{color:var(--amber-hot);font-weight:600;letter-spacing:.06em}
-
-@media(max-width:920px){
-  :root{--rail:0px}
-  .rail{position:sticky;top:0;inset:auto;width:100%;flex-direction:row;align-items:center;gap:16px;padding:12px 16px;border-right:none;border-bottom:1px solid var(--line)}
-  .rail-tag,.rail-status{display:none}
-  .brand-word{font-size:20px}
-  .rail nav{margin:0 0 0 auto;flex-direction:row;overflow-x:auto;gap:0}
-  .rail nav a{border-left:none;border-bottom:2px solid transparent;white-space:nowrap;padding:8px 10px}
-  .rail nav a.on{border-bottom-color:var(--amber)}
-  main{margin-left:0}
-  .hero{grid-template-columns:1fr;min-height:0;padding-top:48px}
-  .dl-inner{grid-template-columns:1fr}
-  .spec-table td:first-child{width:auto;display:block}
-  .spec-table td{display:block;width:100%;padding-bottom:4px}
-  .spec-table tr td:last-child{padding:0 0 16px}
-}
-@media(prefers-reduced-motion:reduce){
-  html{scroll-behavior:auto}
-  .cursor{animation:none}
-  *{transition:none!important}
-}
-.reveal{opacity:0;transform:translateY(14px);transition:opacity .6s cubic-bezier(.16,1,.3,1),transform .6s cubic-bezier(.16,1,.3,1)}
-.reveal.in{opacity:1;transform:none}
-@media(prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none}}
-</style>
+<link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
 <a class="skip" href="#download">Skip to download</a>
@@ -205,20 +16,17 @@ footer .eof{text-align:center;margin-top:34px;color:var(--olive);letter-spacing:
 <aside class="rail">
   <div>
     <div class="brand">
-      <svg class="reticle" width="34" height="34" viewBox="0 0 34 34" fill="none" aria-hidden="true">
-        <circle cx="17" cy="17" r="12" stroke="#ffb000" stroke-width="1.5"/>
-        <path d="M17 1v9M17 24v9M1 17h9M24 17h9" stroke="#ffb000" stroke-width="1.5"/>
-        <circle cx="17" cy="17" r="2.5" fill="#ff6b1a"/>
-      </svg>
+      <svg width="34" height="34" viewBox="0 0 34 34" fill="none" aria-hidden="true"><circle cx="17" cy="17" r="12" stroke="#ffb000" stroke-width="1.5"/><path d="M17 1v9M17 24v9M1 17h9M24 17h9" stroke="#ffb000" stroke-width="1.5"/><circle cx="17" cy="17" r="2.5" fill="#ff6b1a"/></svg>
       <div class="brand-word">STARGAZE<br><span>MODS</span></div>
     </div>
     <div class="rail-tag">KURUMA EXECUTIVE PANEL</div>
   </div>
   <nav aria-label="Sections">
-    <a href="#overview">SYSTEM</a>
-    <a href="#modules">MODULES</a>
-    <a href="#config">CONFIG</a>
-    <a href="#download">DOWNLOAD</a>
+    <a href="index.html">SYSTEM</a>
+    <a href="modules.html">MODULES</a>
+    <a href="verify.html">KEY SYSTEM</a>
+    <a href="setup.html">SETUP GUIDE</a>
+    <a href="proofs.html">PROOFS</a>
   </nav>
   <div class="rail-status">
     <div>BUILD <b>3.7.1-STABLE</b></div>
@@ -232,25 +40,37 @@ footer .eof{text-align:center;margin-top:34px;color:var(--olive);letter-spacing:
     <div>
       <h1 class="hero-type">STAR<span class="l2">GAZE</span><br>MODS</h1>
       <p class="hero-sub">Kuruma executive panel. An unyielding aim and sight that <em>knows no shadow</em>. Runtime injection, live telemetry, and anomaly shielding for rooted Android battle arenas.</p>
+      <p class="collab">BUILT IN COLLAB <b>KURAMA × STARGAZE</b> · PUBLISHED BY <b>STARGAZE</b></p>
       <div class="readout">
-        <span>BUILD <b style="color:var(--bone)">3.7.1</b></span>
-        <span>PLATFORM <b style="color:var(--bone)">ANDROID</b></span>
-        <span>OVERLAY <b style="color:var(--bone)">LAYER 2003</b></span>
+        <span>BUILD <b>3.7.1</b></span>
+        <span>PLATFORM <b>ANDROID</b></span>
+        <span>OVERLAY <b>LAYER 2003</b></span>
       </div>
       <div class="cta-row">
-        <a class="btn btn-solid" href="https://github.com/pranav-pramod-dwivedi/STARGAZE-MODS---KURUMA/releases/latest" id="download">
+        <a class="btn btn-solid" href="https://github.com/pranav-pramod-dwivedi/STARGAZE-MODS---KURUMA/releases/latest">
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M7 1v8m0 0L3.5 5.5M7 9l3.5-3.5M1.5 12.5h11" stroke="currentColor" stroke-width="1.6"/></svg>
           DOWNLOAD APK
         </a>
-        <a class="btn btn-ghost" href="#modules">VIEW MODULES</a>
-        <span class="ver">v3.7.1 &middot; 60 FPS OVERLAY &middot; FREE</span>
+        <a class="btn btn-ghost" href="setup.html">SETUP GUIDE</a>
+        <span class="ver">v3.7.1 · 60 FPS OVERLAY · FREE</span>
       </div>
     </div>
-    <div class="term" id="term" role="button" tabindex="0" aria-label="Deployment log, click to replay">
-      <div class="term-bar"><span>KURUMA://core/injector.sh</span><b>&#9679; LIVE</b></div>
-      <div class="term-body" id="termBody" aria-live="polite"></div>
+    <div class="term" role="button" tabindex="0" aria-label="Deployment log, click to replay">
+      <div class="term-bar">
+        <span>KURUMA://runtime</span>
+        <span class="term-tabs">
+          <button type="button" data-term-tab="deploy" class="on">DEPLOY</button>
+          <button type="button" data-term-tab="keycheck">KEY CHECK</button>
+        </span>
+        <b class="live">&#9679; LIVE</b>
+      </div>
+      <div class="term-body" data-term-body="deploy" aria-live="polite"></div>
     </div>
   </section>
+
+  <div class="annbar" id="announceBar">
+    <div class="ann-in"><span class="ann-tag">FEED</span></div>
+  </div>
 
   <div class="meta-strip reveal">
     <div>TARGET<b>COM.DTS.FREEFIRETH</b></div>
@@ -264,7 +84,7 @@ footer .eof{text-align:center;margin-top:34px;color:var(--olive);letter-spacing:
       <div class="kicker-row"><span class="idx">01</span><h2>System overview</h2></div>
       <p>Attaches to active PIDs via superuser privileges, intercepts 3D coordinate matrices and entity vectors from the centralized memory space, and projects telemetry onto an isolated system overlay layer. Published for educational research and memory-hooking study.</p>
     </div>
-    <div class="spec reveal">
+    <div class="block reveal">
       <div class="req-list">
         <div><b>MAGISK / KERNELSU</b><span>Root manager with UID 0 granted to the injector shell</span></div>
         <div><b>ARM64-V8A DEVICE</b><span>64-bit ARM CPU, Android 10 or newer recommended</span></div>
@@ -277,161 +97,51 @@ footer .eof{text-align:center;margin-top:34px;color:var(--olive);letter-spacing:
   <section id="modules">
     <div class="sec-head reveal">
       <div class="kicker-row"><span class="idx">02</span><h2>Combat modules</h2></div>
-      <p>Three weapon systems, twelve modules. Every module reads live memory and renders through the isolated overlay pipeline.</p>
+      <p>Three weapon systems, twelve modules. Every module reads live memory and renders through the isolated overlay pipeline. Full breakdown on the modules page.</p>
     </div>
-
-    <div class="spec reveal">
-      <table class="spec-table">
-        <caption class="sr-only" style="position:absolute;left:-9999px">Aim engine modules</caption>
-        <tbody>
-          <tr><td>MEMORY POINTER HOOK</td><td>Intercepts <code>Transform_GetPosition</code> to compute XYZ coordinate offsets instantly</td></tr>
-          <tr><td>FOV MATRIX SCALER</td><td>Interactive field-of-view bounding circle with configurable pixel tolerance</td></tr>
-          <tr><td>ORGANIC SMOOTHING</td><td>LERP + bezier curve interpolation tuned to mimic human input curves</td></tr>
-          <tr><td>TARGET PRIORITY</td><td>Real-time sorting by distance, health, and crosshair proximity</td></tr>
-        </tbody>
-      </table>
-      <table class="spec-table" style="margin-top:34px">
-        <tbody>
-          <tr><td>CHAMS OVERLAY</td><td>Patches <code>glDepthFunc</code> to render entities through solid geometry</td></tr>
-          <tr><td>SKELETAL WIREFRAMES</td><td>Queries <code>GetBoneTransform</code> to map joint skeletons and posture vectors</td></tr>
-          <tr><td>3D BOUNDING BOXES</td><td>Dynamic range-finder with distance, health, and equipment arrays</td></tr>
-          <tr><td>DROP RADAR</td><td>Filters ground items, supply crates, and vehicles onto the radar UI</td></tr>
-        </tbody>
-      </table>
-      <table class="spec-table" style="margin-top:34px">
-        <tbody>
-          <tr><td>MEMORY MASKING</td><td>Freezes and hides modified values across randomized virtual address spaces</td></tr>
-          <tr><td>LOG INVALIDATION</td><td>Hooks <code>__android_log_print</code> to intercept and wipe security flags</td></tr>
-          <tr><td>SIGNATURE SPOOFER</td><td>Emulates clean device identification to obfuscate the root environment</td></tr>
-          <tr><td>RUNTIME ENCRYPTION</td><td>Obfuscates offset patterns during active memory scanning windows</td></tr>
-        </tbody>
-      </table>
+    <div class="block reveal">
+      <table class="spec-table"><tbody>
+        <tr><td>MEMORY POINTER HOOK</td><td>Intercepts <code>Transform_GetPosition</code> to compute XYZ coordinate offsets instantly</td></tr>
+        <tr><td>SKELETAL WIREFRAMES</td><td>Queries <code>GetBoneTransform</code> to map joint skeletons and posture vectors</td></tr>
+        <tr><td>LOG INVALIDATION</td><td>Hooks <code>__android_log_print</code> to intercept and wipe security flags</td></tr>
+      </tbody></table>
+      <p style="margin-top:22px"><a class="btn btn-ghost" href="modules.html">ALL 12 MODULES + ARCHITECTURE</a></p>
     </div>
   </section>
 
-  <section id="config">
-    <div class="sec-head reveal">
-      <div class="kicker-row"><span class="idx">03</span><h2>config.json</h2></div>
-      <p>Panel behavior ships as a flat config. Edit values, push, relaunch the overlay.</p>
-    </div>
-    <div class="cfg reveal">
-      <div class="cfg-panel">
-        <div class="cfg-bar"><span>KURUMA-MODS/config.json</span><button class="copy-btn" id="copyBtn" type="button">COPY</button></div>
-<pre class="code" id="cfgCode">{
-  <span class="c-k">"aimbot"</span>: { <span class="c-k">"enabled"</span>: <span class="c-b">true</span>, <span class="c-k">"fov"</span>: <span class="c-n">120</span>, <span class="c-k">"smoothing"</span>: <span class="c-n">4.5</span>, <span class="c-k">"target_bone"</span>: <span class="c-b">"head"</span> },
-  <span class="c-k">"esp"</span>: { <span class="c-k">"enabled"</span>: <span class="c-b">true</span>, <span class="c-k">"chams"</span>: <span class="c-b">true</span>, <span class="c-k">"skeleton"</span>: <span class="c-b">true</span>, <span class="c-k">"distance"</span>: <span class="c-b">true</span>, <span class="c-k">"boxes_3d"</span>: <span class="c-b">true</span> },
-  <span class="c-k">"bypass"</span>: { <span class="c-k">"mask_memory"</span>: <span class="c-b">true</span>, <span class="c-k">"nullify_logs"</span>: <span class="c-b">true</span>, <span class="c-k">"spoof_signature"</span>: <span class="c-b">true</span> }
-}</pre>
-      </div>
-    </div>
-  </section>
-
-  <section id="get" class="dl-band">
+  <section id="download" class="dl-band">
     <div class="dl-inner reveal">
       <div>
         <h3>Deploy to your<br>battle arena</h3>
-        <p>Grab the latest signed build from releases. Verify the archive before flashing, grant root to the injector, and launch from the panel home.</p>
+        <p>Grab the latest signed build from releases, verify the archive, then follow the setup guide step by step. Root required.</p>
         <div class="hash-row">
           <span>VERSION <b>3.7.1-STABLE</b></span>
           <span>ABI <b>ARM64-V8A</b></span>
           <span>CHECK <b>SHA-256 ON RELEASE PAGE</b></span>
         </div>
       </div>
-      <a class="btn btn-solid" href="https://github.com/pranav-pramod-dwivedi/STARGAZE-MODS---KURUMA/releases/latest" style="padding:20px 34px;font-size:15px">
-        GET THE PANEL
-        <svg width="15" height="15" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M2 12L12 2m0 0H4.5M12 2v7.5" stroke="currentColor" stroke-width="1.6"/></svg>
-      </a>
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <a class="btn btn-solid" href="https://github.com/pranav-pramod-dwivedi/STARGAZE-MODS---KURUMA/releases/latest" style="padding:20px 34px;font-size:15px">
+          GET THE PANEL
+          <svg width="15" height="15" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M2 12L12 2m0 0H4.5M12 2v7.5" stroke="currentColor" stroke-width="1.6"/></svg>
+        </a>
+        <a class="btn btn-ghost" href="setup.html" style="justify-content:center">READ THE GUIDE FIRST</a>
+      </div>
     </div>
   </section>
 
   <footer>
     <div class="warn-block"><b>WARNING //</b> Published strictly for educational research, reverse-engineering study, and memory-hooking demonstrations. Usage against live servers violates third-party Terms of Service. Developers assume zero liability for account actions.</div>
-    <p style="margin-top:26px">STARGAZE MODS &middot; Kuruma executive panel &middot; <a href="https://github.com/pranav-pramod-dwivedi/STARGAZE-MODS---KURUMA" style="color:var(--amber)">GitHub repository</a></p>
+    <div class="credits">
+      <span>BUILT BY <b>KURAMA × STARGAZE</b></span>
+      <span>PUBLISHED &amp; MAINTAINED BY <b>STARGAZE</b></span>
+      <span><a href="https://github.com/pranav-pramod-dwivedi/STARGAZE-MODS---KURUMA" style="color:var(--amber)">GITHUB REPO</a></span>
+      <span><a href="proofs.html" style="color:var(--amber)">POST A PROOF</a></span>
+    </div>
     <div class="eof">[ EOF // SYSTEM SECURE ]</div>
   </footer>
 </main>
 
-<script>
-(function(){
-  var lines=[
-    ["t-plus","[+] Initializing Kuruma Mods Executive Suite..."],
-    ["t-plus","[+] Verifying Superuser Permissions: GRANTED (UID 0)"],
-    ["t-plus","[+] Hooking target PID 14892 -> com.dts.freefireth"],
-    ["t-dim","[+] Locating libil2cpp.so base... [0x7f83a12000]"],
-    ["t-plus","[+] Applying aim vector hook offset [0x1A2F4B0] -> PATCHED"],
-    ["t-plus","[+] Applying ESP glDepthFunc override -> ACTIVE"],
-    ["t-ok","[+] Log nullifier initialized. Zero tracking logs."],
-    ["t-ok","[+] Rendering overlay on layer 2003 (TYPE_APPLICATION_OVERLAY)"],
-    ["t-warn","[!] EXECUTION STABLE. ENTERING WAR THEATER."]
-  ];
-  var body=document.getElementById('termBody'),timer=null,reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  function renderAll(){
-    stop();
-    body.innerHTML='';
-    lines.forEach(function(l){
-      var d=document.createElement('div');
-      d.className='ln '+l[0];
-      d.textContent=l[1];
-      body.appendChild(d);
-    });
-    cursor();
-  }
-  function cursor(){
-    var c=document.createElement('span');c.className='cursor';c.id='cur';
-    body.lastChild&&body.appendChild(c);
-  }
-  function stop(){if(timer){clearInterval(timer);timer=null}}
-  function type(){
-    stop();
-    body.innerHTML='';
-    var li=0,ci=0,cur=document.createElement('span');cur.className='cursor';
-    var curLine=null;
-    timer=setInterval(function(){
-      if(li>=lines.length){clearInterval(timer);timer=null;return}
-      if(!curLine){
-        curLine=document.createElement('div');
-        curLine.className='ln '+lines[li][0];
-        body.appendChild(curLine);
-      }
-      var txt=lines[li][1];
-      curLine.textContent=txt.slice(0,++ci);
-      curLine.appendChild(cur);
-      if(ci>=txt.length){li++;ci=0;curLine=null}
-    },18);
-  }
-  if(reduced){renderAll()}else{type()}
-  var term=document.getElementById('term');
-  term.addEventListener('click',function(){reduced?renderAll():type()});
-  term.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();reduced?renderAll():type()}});
-
-  var io=new IntersectionObserver(function(es){
-    es.forEach(function(en){if(en.isIntersecting){en.target.classList.add('in');io.unobserve(en.target)}});
-  },{threshold:.12});
-  document.querySelectorAll('.reveal').forEach(function(el){io.observe(el)});
-
-  var secs=document.querySelectorAll('section[id]');
-  var links=document.querySelectorAll('.rail nav a');
-  var ioNav=new IntersectionObserver(function(es){
-    es.forEach(function(en){
-      if(en.isIntersecting){
-        links.forEach(function(a){a.classList.toggle('on',a.getAttribute('href')==='#'+en.target.id)});
-      }
-    });
-  },{rootMargin:'-40% 0px -55% 0px'});
-  secs.forEach(function(s){ioNav.observe(s)});
-
-  document.getElementById('copyBtn').addEventListener('click',function(){
-    var txt=document.getElementById('cfgCode').textContent;
-    var b=this;
-    function done(){b.textContent='COPIED';b.classList.add('done');setTimeout(function(){b.textContent='COPY';b.classList.remove('done')},1400)}
-    if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(done,function(){fallback()})}else{fallback()}
-    function fallback(){
-      var ta=document.createElement('textarea');ta.value=txt;document.body.appendChild(ta);ta.select();
-      try{document.execCommand('copy');done()}catch(e){}
-      document.body.removeChild(ta);
-    }
-  });
-})();
-</script>
+<script src="assets/app.js"></script>
 </body>
 </html>
