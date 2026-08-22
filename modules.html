@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Modules // STARGAZE MODS</title>
+<meta name="description" content="All twelve Kuruma panel modules and the real runtime architecture: IPC service, overlay pipeline, Virbox packing, Shizuku support.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<a class="skip" href="#aim">Skip to modules</a>
+
+<aside class="rail">
+  <div>
+    <div class="brand">
+      <svg width="34" height="34" viewBox="0 0 34 34" fill="none" aria-hidden="true"><circle cx="17" cy="17" r="12" stroke="#ffb000" stroke-width="1.5"/><path d="M17 1v9M17 24v9M1 17h9M24 17h9" stroke="#ffb000" stroke-width="1.5"/><circle cx="17" cy="17" r="2.5" fill="#ff6b1a"/></svg>
+      <div class="brand-word">STARGAZE<br><span>MODS</span></div>
+    </div>
+    <div class="rail-tag">KURUMA EXECUTIVE PANEL</div>
+  </div>
+  <nav aria-label="Sections">
+    <a href="index.html">SYSTEM</a>
+    <a href="modules.html">MODULES</a>
+    <a href="verify.html">KEY SYSTEM</a>
+    <a href="setup.html">SETUP GUIDE</a>
+    <a href="proofs.html">PROOFS</a>
+  </nav>
+  <div class="rail-status">
+    <div>BUILD <b>3.7.1-STABLE</b></div>
+    <div>ARCH <b>ARM64-V8A</b></div>
+    <div>PRIV <b>ROOT / UID 0</b></div>
+  </div>
+</aside>
+
+<main>
+  <section class="page-head reveal">
+    <div class="kicker-row"><span class="idx">PAGE 02 // MODULES</span><h1>Combat modules &amp; architecture</h1></div>
+    <p class="lede">Twelve modules across three weapon systems, wired through a real multi-process Android architecture. Everything below is from the shipped source tree and production manifest.</p>
+  </section>
+
+  <section id="aim">
+    <div class="sec-head reveal"><div class="kicker-row"><span class="idx">A</span><h2>Infallible aim engine</h2></div></div>
+    <div class="block reveal">
+      <table class="spec-table"><tbody>
+        <tr><td>MEMORY POINTER HOOK</td><td>Intercepts <code>Transform_GetPosition</code> to compute XYZ coordinate offsets instantly</td></tr>
+        <tr><td>FOV MATRIX SCALER</td><td>Interactive field-of-view bounding circle with configurable pixel tolerance</td></tr>
+        <tr><td>ORGANIC SMOOTHING</td><td>LERP + bezier curve interpolation tuned to mimic human input curves</td></tr>
+        <tr><td>TARGET PRIORITY</td><td>Real-time sorting by distance, health, and crosshair proximity</td></tr>
+      </tbody></table>
+    </div>
+  </section>
+
+  <section id="esp">
+    <div class="sec-head reveal"><div class="kicker-row"><span class="idx">B</span><h2>Omnipresent visual telemetry</h2></div></div>
+    <div class="block reveal">
+      <table class="spec-table"><tbody>
+        <tr><td>CHAMS OVERLAY</td><td>Patches <code>glDepthFunc</code> to render entities through solid geometry</td></tr>
+        <tr><td>SKELETAL WIREFRAMES</td><td>Queries <code>GetBoneTransform</code> to map joint skeletons and posture vectors</td></tr>
+        <tr><td>3D BOUNDING BOXES</td><td>Dynamic range-finder with distance, health, and equipment arrays</td></tr>
+        <tr><td>DROP RADAR</td><td>Filters ground items, supply crates, and vehicles onto the radar UI</td></tr>
+      </tbody></table>
+    </div>
+  </section>
+
+  <section id="shield">
+    <div class="sec-head reveal"><div class="kicker-row"><span class="idx">C</span><h2>Anomaly bypass shield</h2></div></div>
+    <div class="block reveal">
+      <table class="spec-table"><tbody>
+        <tr><td>MEMORY MASKING</td><td>Freezes and hides modified values across randomized virtual address spaces</td></tr>
+        <tr><td>LOG INVALIDATION</td><td>Hooks <code>__android_log_print</code> to intercept and wipe security flags</td></tr>
+        <tr><td>SIGNATURE SPOOFER</td><td>Emulates clean device identification to obfuscate the root environment</td></tr>
+        <tr><td>RUNTIME ENCRYPTION</td><td>Obfuscates offset patterns during active memory scanning windows</td></tr>
+      </tbody></table>
+    </div>
+  </section>
+
+  <section id="arch">
+    <div class="sec-head reveal">
+      <div class="kicker-row"><span class="idx">D</span><h2>Runtime architecture</h2></div>
+      <p>The real process chain inside the shipped build. Class names are verbatim from the decompiled tree.</p>
+    </div>
+    <div class="block reveal">
+      <table class="spec-table"><tbody>
+        <tr><td>LOGIN SHELL</td><td><code>ropl.momo.item.MainActivity</code> — key entry, license REST check, project status poll every 30s, config UI host</td></tr>
+        <tr><td>BINDER BRIDGE</td><td><code>IPCCond.IPCService</code>, <code>IPCCond.SuperMain</code>, <code>IPCCond.AIDLConnection</code> — isolated service process; UI waits up to 10 × 500ms for the bind before failing</td></tr>
+        <tr><td>OVERLAY ENGINE</td><td><code>Service.FloatService</code> + <code>TouchView</code> + <code>WindowParams</code> — floating panel on layer 2003 (<code>TYPE_APPLICATION_OVERLAY</code>) with input passthrough; <code>HideEsp</code> toggle for capture-safe rendering</td></tr>
+        <tr><td>SUPERUSER LAYER</td><td><code>com.topjohnwu.superuser</code> (libsu) — root shell sessions, UID 0 verification before any hook applies</td></tr>
+        <tr><td>TARGET ATTACH</td><td>PID attach on <code>com.dts.freefireth</code>, base resolve of <code>libil2cpp.so</code>, offset patch <code>0x1A2F4B0</code>, ESP via <code>glDepthFunc</code> override</td></tr>
+      </tbody></table>
+    </div>
+  </section>
+
+  <section id="packaging">
+    <div class="sec-head reveal">
+      <div class="kicker-row"><span class="idx">E</span><h2>Protection &amp; packaging</h2></div>
+      <p>What the APK actually contains — verified by static inspection of the shipped artifact.</p>
+    </div>
+    <div class="block reveal">
+      <table class="spec-table"><tbody>
+        <tr><td>PACKER</td><td>Virbox stub <code>l4bc35b83</code>; shipped dex is encrypted, unpacked in memory at launch by native loaders</td></tr>
+        <tr><td>NATIVE LOADERS</td><td><code>assets/l4bc35b83_a32.so</code> · <code>_a64.so</code> · <code>_x64.so</code> · <code>_x86.so</code> — one per ABI, arm64-v8a is the supported path</td></tr>
+        <tr><td>SHIZUKU PATH</td><td><code>rikka.shizuku.ShizukuProvider</code> with <code>moe.shizuku.client.V3_SUPPORT</code> — shell-level operation without full root where available</td></tr>
+        <tr><td>DISTRIBUTION ID</td><td>Package id <code>com.abcd.panel</code> with <code>FloatingOverlayService</code> launcher service</td></tr>
+      </tbody></table>
+    </div>
+  </section>
+
+  <section id="perms">
+    <div class="sec-head reveal">
+      <div class="kicker-row"><span class="idx">F</span><h2>Permissions, explained</h2></div>
+      <p>Every permission requested by the production manifest and why it exists. Nothing more is asked.</p>
+    </div>
+    <div class="block reveal">
+      <table class="tri">
+        <thead><tr><th>PERMISSION</th><th>WHY IT EXISTS</th></tr></thead>
+        <tbody>
+          <tr><td>SYSTEM_ALERT_WINDOW</td><td>Draws the floating panel over the game (overlay layer 2003)</td></tr>
+          <tr><td>FOREGROUND_SERVICE</td><td>Keeps FloatService alive while the panel runs</td></tr>
+          <tr><td>INTERNET + ACCESS_NETWORK_STATE</td><td>License key checks and project status polling against Firebase RTDB</td></tr>
+          <tr><td>READ/WRITE_EXTERNAL_STORAGE + MANAGE_EXTERNAL_STORAGE</td><td>Injector shell reads/writes its payload files on storage</td></tr>
+          <tr><td>INTERACT_ACROSS_USERS_FULL</td><td>Lets the injector operate across work profiles when invoked via shell</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <footer>
+    <div class="warn-block"><b>WARNING //</b> Published strictly for educational research, reverse-engineering study, and memory-hooking demonstrations. Usage against live servers violates third-party Terms of Service. Developers assume zero liability for account actions.</div>
+    <div class="credits">
+      <span>BUILT BY <b>KURAMA × STARGAZE</b></span>
+      <span>PUBLISHED &amp; MAINTAINED BY <b>STARGAZE</b></span>
+      <span><a href="index.html#download" style="color:var(--amber)">DOWNLOAD</a></span>
+    </div>
+    <div class="eof">[ EOF // SYSTEM SECURE ]</div>
+  </footer>
+</main>
+
+<script src="assets/app.js"></script>
+</body>
+</html>
