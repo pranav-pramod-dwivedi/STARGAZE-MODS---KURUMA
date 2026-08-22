@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Proofs Center // STARGAZE MODS</title>
+<meta name="description" content="Live proofs wall and announcements for the Kuruma executive panel — real-time posts from users, straight to the production Firebase database.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<a class="skip" href="#wall">Skip to the wall</a>
+
+<aside class="rail">
+  <div>
+    <div class="brand">
+      <svg width="34" height="34" viewBox="0 0 34 34" fill="none" aria-hidden="true"><circle cx="17" cy="17" r="12" stroke="#ffb000" stroke-width="1.5"/><path d="M17 1v9M17 24v9M1 17h9M24 17h9" stroke="#ffb000" stroke-width="1.5"/><circle cx="17" cy="17" r="2.5" fill="#ff6b1a"/></svg>
+      <div class="brand-word">STARGAZE<br><span>MODS</span></div>
+    </div>
+    <div class="rail-tag">KURUMA EXECUTIVE PANEL</div>
+  </div>
+  <nav aria-label="Sections">
+    <a href="index.html">SYSTEM</a>
+    <a href="modules.html">MODULES</a>
+    <a href="verify.html">KEY SYSTEM</a>
+    <a href="setup.html">SETUP GUIDE</a>
+    <a href="proofs.html">PROOFS</a>
+  </nav>
+  <div class="rail-status">
+    <div>BUILD <b>3.7.1-STABLE</b></div>
+    <div>SOURCE <b>KURAMA-MODS-PRO</b></div>
+    <div>SYNC <b>LIVE / 30s POLL</b></div>
+  </div>
+</aside>
+
+<main>
+  <section class="page-head reveal">
+    <div class="kicker-row"><span class="idx">PAGE 05 // PROOFS CENTER</span><h1>The wall does not lie</h1></div>
+    <p class="lede">Real-time proofs from real sessions: text, screenshots and clips, posted straight into the production database this panel ships with. The feed polls every 30 seconds and on every refresh.</p>
+  </section>
+
+  <section id="post">
+    <div class="sec-head reveal"><div class="kicker-row"><span class="idx">POST</span><h2>Add your proof</h2></div></div>
+    <div class="block reveal">
+      <form id="proofForm" class="box" style="padding:clamp(20px,3vw,32px)" novalidate>
+        <div class="form-grid">
+          <div><label class="f" for="fName">CALLSIGN (MAX 24)</label><input type="text" id="fName" maxlength="24" placeholder="your handle"></div>
+          <div><label class="f" for="fDevice">DEVICE / RESULT (OPTIONAL)</label><input type="text" id="fDevice" maxlength="18" placeholder="e.g. SD855 · 20 BOOYAH"></div>
+          <div class="full"><label class="f" for="fText">PROOF TEXT (MAX 280) *</label><textarea id="fText" maxlength="280" placeholder="what happened in your session"></textarea></div>
+          <div class="full"><label class="f" for="fMedia">MEDIA LINK (IMGUR IMAGE OR YOUTUBE/STREAMABLE CLIP)</label><input type="url" id="fMedia" placeholder="https://..."></div>
+        </div>
+        <div class="keyrow" style="margin-top:16px;display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+          <button class="btn btn-solid" type="submit">POST TO THE WALL
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M1.5 7h11m0 0L8 2.5M12.5 7L8 11.5" stroke="currentColor" stroke-width="1.6"/></svg>
+          </button>
+          <span id="formMsg" style="font-size:12px;color:var(--dim)"></span>
+        </div>
+        <p class="note">Database stores text only — host images on Imgur or clips on YouTube/Streamable and paste the link. One post per minute. All user content is shown verbatim.</p>
+      </form>
+      <div class="box" style="margin-top:18px">
+        <div class="box-head"><span>OWNER SETUP // FIREBASE RTDB RULES THAT UNLOCK THIS PAGE</span><button class="copy-btn" type="button" data-copy="rulesCode">COPY</button></div>
+        <pre class="code" id="rulesCode">{
+  <span class="c-k">"rules"</span>: {
+    <span class="c-s">".read"</span>: false,
+    <span class="c-s">".write"</span>: false,
+    <span class="c-s">"public"</span>: {
+      <span class="c-s">"proofs"</span>:       { <span class="c-s">".read"</span>: true, <span class="c-s">".write"</span>: true },
+      <span class="c-s">"announcements"</span>: { <span class="c-s">".read"</span>: true }
+    }
+  }
+}</pre>
+        <p style="padding:0 20px 20px;font-size:12px;color:var(--dim)">Paste into Firebase console → Realtime Database → Rules. Only the public node opens; license_keys and project_status stay locked. Until these rules are live, this page shows its locked state honestly instead of fake content.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="wall">
+    <div class="sec-head reveal"><div class="kicker-row"><span class="idx">WALL</span><h2>Live proofs</h2></div>
+      <p style="margin-top:14px;padding:0 var(--pad)"><button class="mini-btn" id="refreshFeed" type="button">REFRESH NOW</button> <span id="feedStamp" style="font-size:10.5px;color:var(--dim);letter-spacing:.08em;margin-left:12px"></span></p>
+    </div>
+    <div class="block reveal">
+      <div class="feed" id="proofFeed"><div class="state">SYNCING...</div></div>
+    </div>
+  </section>
+
+  <section id="announcements">
+    <div class="sec-head reveal"><div class="kicker-row"><span class="idx">FEED</span><h2>Announcements</h2></div>
+      <p>Operator posts, newest first. Also shown as the live strip on the home page.</p>
+    </div>
+    <div class="block reveal">
+      <div class="feed ann-list" id="annListFull"><div class="state">SYNCING...</div></div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="warn-block"><b>WARNING //</b> Published strictly for educational research, reverse-engineering study, and memory-hooking demonstrations. Usage against live servers violates third-party Terms of Service. Developers assume zero liability for account actions.</div>
+    <div class="credits">
+      <span>BUILT BY <b>KURAMA × STARGAZE</b></span>
+      <span>PUBLISHED &amp; MAINTAINED BY <b>STARGAZE</b></span>
+      <span><a href="index.html#download" style="color:var(--amber)">DOWNLOAD</a></span>
+    </div>
+    <div class="eof">[ EOF // SYSTEM SECURE ]</div>
+  </footer>
+</main>
+
+<script src="assets/app.js"></script>
+</body>
+</html>
