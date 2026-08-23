@@ -1,27 +1,69 @@
 {
   "announcements": [
-    {
-      "msg": "3.7.1-STABLE is live on the green channel. All 2.40.x builds are patched \u2014 do not install them.",
-      "ts": "2026-08-21T18:00:00Z"
-    },
-    {
-      "msg": "2.58.3 moved to yellow: works, but run it on a second account only.",
-      "ts": "2026-08-19T12:00:00Z"
-    }
+    { "msg": "StarGaze Vip Proxy (No Root) is LIVE — green channel, main ID safe on India server. 2.1 stays yellow: second ID only.", "ts": "2026-08-23T05:30:00Z" }
   ],
   "versions": [
     {
+      "v": "VIP-PROXY",
+      "status": "green",
+      "name": "StarGaze Vip Proxy (No Root)",
+      "date": "2026-08-23",
+      "desc": "Proxy injection panel for Free Fire — no root needed. Aim Silent + Chams Location. Main ID fully safe on the India server.",
+      "file": "https://t.me/pranav_d18",
+      "features": ["AIM SILENT", "CHAMS LOCATION", "NO ROOT / SHIZUKU"],
+      "keyLine": "Built-in key: Bantifucked",
+      "notes": [
+        "Main ID fully safe · India server only",
+        "FIRST open Free Fire and log in to your ID",
+        "If any function does not work, reinject several times"
+      ],
+      "tg": "@pranav_d18",
+      "steps": [
+        "Install Shizuku (Play Store or GitHub) on the phone",
+        "Enable Developer Options: tap Build Number 7 times in About phone",
+        "In Developer Options enable Wireless Debugging",
+        "Open Shizuku → Pairing → Wireless Debugging Pairing → enter the code Android shows",
+        "Tap Start in Shizuku to launch the service",
+        "Open StarGaze Vip Proxy and allow the Shizuku permission prompt",
+        "First run: open Free Fire and log in to your ID before injecting",
+        "Start the proxy — if a function does not work, reinject several times",
+        "Second account? Repeat the exact same Shizuku setup steps on that device"
+      ]
+    },
+    {
+      "v": "2.1",
+      "status": "yellow",
+      "name": "STARGAZE Mods_Proxy 2.1 (No Root)",
+      "date": "2026-08-23",
+      "desc": "Full power proxy panel — no root. Full aim-bot and all ESP modules for Free Fire.",
+      "file": "https://t.me/pranav_d18",
+      "features": ["AIM-BOT", "ESP ALL", "NO ROOT / SHIZUKU"],
+      "keyLine": "Get Key — @Kurama_GetKey_bot",
+      "notes": ["Use second ID on this build"],
+      "tg": "@pranav_d18",
+      "steps": [
+        "Set up Shizuku once: install app → Wireless Debugging → pair with the on-screen code → Start",
+        "Open STARGAZE Mods_Proxy 2.1 and grant the Shizuku permission",
+        "Get your key from @Kurama_GetKey_bot on Telegram",
+        "Enter the key in the panel",
+        "Open Free Fire, log in to your SECOND ID, then inject",
+        "Reinject several times if anything does not attach"
+      ]
+    },
+    {
       "v": "3.7.1",
       "status": "green",
-      "name": "3.7.1-STABLE",
+      "name": "Kuruma Panel 3.7.1-STABLE (Root)",
       "date": "2026-08-20",
-      "desc": "Current production build. Verified working on arm64-v8a with Magisk 27+ and KernelSU. Overlay at layer 2003, config delivery live.",
+      "desc": "Classic rooted executive build. Memory pointer hooks, full ESP pipeline, anomaly shield. arm64-v8a, Magisk/KernelSU.",
       "file": "https://pranav-pramod-dwivedi.github.io/STARGAZE-MODS---KURUMA/apks/Kuruma-3.7.1-arm64.apk",
+      "features": ["AIM ENGINE", "FULL ESP", "ANOMALY SHIELD"],
+      "keyLine": "License key required — @pranav_d18",
       "steps": [
-        "Download the APK from the releases page on your device",
-        "Allow installs from unknown apps for your browser or file manager",
-        "Grant the superuser prompt when the panel asks (UID 0 required)",
-        "Enable Display over other apps so the overlay can render",
+        "Download the APK directly from this page",
+        "Allow installs from unknown apps; Play Protect may scan the packed file once",
+        "Grant Magisk/KernelSU superuser when asked",
+        "Enable Display over other apps for the overlay",
         "Activate your license key and wait for OK",
         "Launch the floating panel inside a match"
       ]
@@ -29,47 +71,42 @@
     {
       "v": "2.58.3",
       "status": "yellow",
-      "name": "2.58.3-LEGACY",
+      "name": "Kuruma Panel 2.58.3-LEGACY (Root)",
       "date": "2026-07-16",
-      "desc": "Older stable line. Still attaches cleanly, but detection heat is higher on this build \u2014 second account strongly advised.",
-      "file": "https://pranav-pramod-dwivedi.github.io/STARGAZE-MODS---KURUMA/apks/Kuruma-2.58.3-arm64.apk",
-      "steps": [
-        "Download the 2.58.3 APK from releases",
-        "Uninstall any newer build first to avoid signature conflicts",
-        "Install and grant root, then enable Display over other apps",
-        "Use a second account only \u2014 do not log your main here"
-      ]
+      "desc": "Older stable line. Still attaches cleanly, detection heat higher — second account strongly advised.",
+      "file": "",
+      "features": ["AIM ENGINE", "ESP CORE"],
+      "keyLine": "Archive access — @pranav_d18",
+      "steps": []
     },
     {
       "v": "2.40.0",
       "status": "red",
-      "name": "2.40.0-PATCHED",
+      "name": "Kuruma Panel 2.40.0-PATCHED (Root)",
       "date": "2026-06-02",
-      "desc": "Server-side patched. Installs but hooks never attach; kept in the archive for reference only.",
+      "desc": "Server-side patched. Installs but hooks never attach; kept for archive only.",
       "file": "",
+      "features": [],
+      "keyLine": "",
       "steps": []
     }
   ],
   "proofs": [
-    {
-      "v": "3.7.1",
-      "media": "assets/proofs/p1.svg",
-      "text": "Chams through solid walls, full squad wipe"
-    },
-    {
-      "v": "3.7.1",
-      "media": "assets/proofs/p2.svg",
-      "text": "Skeletal wireframes holding steady at range"
-    },
-    {
-      "v": "3.7.1",
-      "media": "assets/proofs/p3.svg",
-      "text": "Drop radar tracking crates across the zone"
-    },
-    {
-      "v": "2.58.3",
-      "media": "assets/proofs/p4.svg",
-      "text": "Legacy build overlay still attaching clean"
-    }
+    { "v": "VIP-PROXY", "media": "assets/proofs/proxy1.jpg", "text": "Vip Proxy live session" },
+    { "v": "VIP-PROXY", "media": "assets/proofs/proxy2.jpg", "text": "Chams location confirmed" },
+    { "v": "2.1", "media": "assets/proofs/ff-01.jpg", "text": "Mods_Proxy 2.1 session" },
+    { "v": "2.1", "media": "assets/proofs/ff-02.jpg", "text": "Aim-bot proof" },
+    { "v": "2.1", "media": "assets/proofs/ff-03.jpg", "text": "ESP all active" },
+    { "v": "2.1", "media": "assets/proofs/ff-04.jpg", "text": "Session result" },
+    { "v": "2.1", "media": "assets/proofs/ff-05.jpg", "text": "Session result" },
+    { "v": "2.1", "media": "assets/proofs/clip1.mp4", "text": "Gameplay clip" },
+    { "v": "3.7.1", "media": "assets/proofs/p1.svg", "text": "Chams through solid walls, squad wipe" },
+    { "v": "3.7.1", "media": "assets/proofs/p2.svg", "text": "Skeletal wireframes at range" },
+    { "v": "3.7.1", "media": "assets/proofs/p3.svg", "text": "Drop radar tracking crates" },
+    { "v": "3.7.1", "media": "assets/proofs/ff-06.jpg", "text": "Panel running" },
+    { "v": "3.7.1", "media": "assets/proofs/ff-07.jpg", "text": "Overlay HUD" },
+    { "v": "3.7.1", "media": "assets/proofs/ff-08.jpg", "text": "Session result" },
+    { "v": "3.7.1", "media": "assets/proofs/ff-09.jpg", "text": "Session result" },
+    { "v": "3.7.1", "media": "assets/proofs/clip2.mp4", "text": "Gameplay clip" }
   ]
 }
