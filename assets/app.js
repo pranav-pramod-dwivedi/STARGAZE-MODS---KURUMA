@@ -15,6 +15,8 @@ function mediaInto(box,url,cls){
   var m=url.match(YT_RE);
   if(m){var f=document.createElement("iframe");f.src="https://www.youtube-nocookie.com/embed/"+m[2];
     f.loading="lazy";f.allowFullscreen=true;f.title="proof clip";box.appendChild(f);return}
+  if(/\.mp4(\?\S*)?$/i.test(url)){var v=document.createElement("video");v.src=url;v.controls=true;
+    v.preload="metadata";v.playsInline=true;if(cls)v.className=cls;box.appendChild(v);return}
   if(IMG_RE.test(url)){var i=document.createElement("img");i.src=url;i.alt="proof media";i.loading="lazy";
     if(cls)i.className=cls;box.appendChild(i);return}
   var a=document.createElement("a");a.href=url;a.target="_blank";a.rel="noopener noreferrer nofollow";
@@ -125,6 +127,21 @@ function loadDownloads(){
       if(v.date)meta.appendChild(document.createTextNode(v.date+"  "));
       sec.appendChild(meta);
       var de=document.createElement("p");de.className="dlv-desc";de.textContent=v.desc||"";sec.appendChild(de);
+      if(v.features&&v.features.length){
+        var ul=document.createElement("ul");ul.className="feat-list";
+        v.features.forEach(function(f){var li=document.createElement("li");li.textContent=f;ul.appendChild(li)});
+        sec.appendChild(ul);
+      }
+      if(v.keyLine){var kl=document.createElement("div");kl.className="keyline";
+        var kb=document.createElement("b");kb.textContent="KEY // ";var kt=document.createElement("span");kt.textContent=v.keyLine;
+        kl.appendChild(kb);kl.appendChild(kt);sec.appendChild(kl)}
+      if(v.notes&&v.notes.length){
+        var nl=document.createElement("ul");nl.className="note-list";
+        v.notes.forEach(function(x){var li=document.createElement("li");li.textContent=x;nl.appendChild(li)});
+        sec.appendChild(nl);
+      }
+      if(v.tg){var tr=document.createElement("a");tr.className="tg-row";tr.href="https://t.me/"+String(v.tg).replace("@","");
+        tr.target="_blank";tr.rel="noopener noreferrer nofollow";tr.textContent="TELEGRAM "+v.tg;sec.appendChild(tr)}
       if(v.steps&&v.steps.length){
         var ol=document.createElement("ol");ol.className="mini-steps";
         v.steps.forEach(function(s){var li=document.createElement("li");li.textContent=s;ol.appendChild(li)});
